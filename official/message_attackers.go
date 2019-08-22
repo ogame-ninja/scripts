@@ -15,7 +15,7 @@ attacks = {}
 
 // Either or not the attackerID is new
 func IsNewAttacker(attackerID) {
-    for evt in attacks {
+    for _, evt in attacks {
         if attackerID == evt.AttackerID {
             return false
         }
