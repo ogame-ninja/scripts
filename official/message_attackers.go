@@ -34,11 +34,11 @@ func OnAttack(attackEvent) {
 }
 
 func OnAttackDone(attackEvent) {
-    attacks[attackEvent.ArrivalTime.Unix()] = nil
+    delete(attacks, attackEvent.ArrivalTime.Unix())
 }
 
 func OnAttackCancelled(attackEvent) {
-    attacks[attackEvent.ArrivalTime.Unix()] = nil
+    delete(attacks, attackEvent.ArrivalTime.Unix())
 }
 
 // Infinite loop. Verify if we got new messages in our channels.
