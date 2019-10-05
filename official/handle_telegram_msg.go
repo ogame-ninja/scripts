@@ -1,7 +1,6 @@
 strings = import("strings")
 
 func handleOGameMessage(msg) {
-    Print("chat: ", msg.Text)
     err = SendTelegram(TELEGRAM_CHAT_ID, "Bot: " + BotID + ", PlayerID: " + msg.SenderID + ", " + msg.Text)
     if err != nil {
         LogError("err: ", err)
@@ -17,6 +16,9 @@ func handleTelegramMessage(msg) {
             return // Return early, cmd is not for this bot
         }
         switch cmd {
+        // Message should have this format:
+        // <bot_id> msg <player_id> <message>
+        // eg: `5 msg 95828 How are you doing ?`
         case "msg":
             if len(parts) < 4 {
                 LogError("Invalid number of arguments for msg command")
