@@ -37,8 +37,8 @@ func handleTelegramMessage(msg) {
             }
             Print("Message was sent")
         // Message should have this format:
-        // <bot_id> msga <player_id> <message>
-        // eg: `5 msga 95828 How are you doing ?`
+        // <bot_id> msga <alliance_id> <message>
+        // eg: `5 msga 537 How are you doing ?`
         case "msga":
             if len(parts) < 4 {
                 LogError("Invalid number of arguments for msga command")
