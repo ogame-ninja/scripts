@@ -1,7 +1,7 @@
 strings = import("strings")
 
 func handleOGameMessage(msg) {
-    err = SendTelegram(TELEGRAM_CHAT_ID, "Bot: " + BotID + ", PlayerID: " + msg.SenderID + ", " + msg.Text)
+    err = SendTelegram(TELEGRAM_CHAT_ID, "Bot: " + BotID + ", PlayerID: " + msg.SenderID + ", Assoc: " + msg.AssociationID + ", " + msg.Text)
     if err != nil {
         LogError("err: ", err)
     }
@@ -32,7 +32,27 @@ func handleTelegramMessage(msg) {
             msgToSend = strings.Join(parts[3:], " ")
             err = SendMessage(playerID, msgToSend)
             if err != nil {
-                LogError(err)
+                LogError("SendMessage: ", err, playerID, msgToSend)
+                return
+            }
+            Print("Message was sent")
+        // Message should have this format:
+        // <bot_id> msga <player_id> <message>
+        // eg: `5 msga 95828 How are you doing ?`
+        case "msga":
+            if len(parts) < 4 {
+                LogError("Invalid number of arguments for msga command")
+                return
+            }
+            allianceID = Atoi(parts[2])
+            if allianceID == 0 {
+                LogError("allianceID argument must be an integer")
+                return
+            }
+            msgToSend = strings.Join(parts[3:], " ")
+            err = SendMessageAlliance(allianceID, msgToSend)
+            if err != nil {
+                LogError("SendMessage: ", err, allianceID, msgToSend)
                 return
             }
             Print("Message was sent")
