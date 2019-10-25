@@ -17,7 +17,7 @@ func startSleep(period) {
 CronExec("0 0 23 * * 0", startSleep(tenHours))   // Sun - Sleep at: 23h for 10h
 CronExec("0 0 21 * * 1", startSleep(eightHours)) // Mon - Sleep at: 21h for  8h
 CronExec("0 0 21 * * 2", startSleep(eightHours)) // Tue - Sleep at: 21h for  8h
-CronExec("0 0 21 * * 3", startSleep(eightHours)) // Wef - Sleep at: 21h for  8h
+CronExec("0 0 21 * * 3", startSleep(eightHours)) // Wed - Sleep at: 21h for  8h
 CronExec("0 0 21 * * 4", startSleep(eightHours)) // Thu - Sleep at: 21h for  8h
 CronExec("0 0 21 * * 5", startSleep(eightHours)) // Fri - Sleep at: 21h for  8h
 CronExec("0 0 23 * * 6", startSleep(tenHours))   // Sat - Sleep at: 23h for 10h
