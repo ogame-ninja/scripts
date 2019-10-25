@@ -6,7 +6,7 @@ fifteenMinutes = 15 * oneMinute
 eightHours     =  8 * oneHour
 tenHours       = 10 * oneHour
 
-func startSleep(period) {
+func newSleepCallback(period) {
     return func() {
         Sleep(Random(0, fifteenMinutes * 1000)) // Random sleep 0-15min
         Print("Going to sleep for " + ShortDur(period))
@@ -17,11 +17,11 @@ func startSleep(period) {
     }
 }
 
-CronExec("0 0 23 * * 0", startSleep(tenHours))   // Sun - Sleep at: 23h for 10h
-CronExec("0 0 21 * * 1", startSleep(eightHours)) // Mon - Sleep at: 21h for  8h
-CronExec("0 0 21 * * 2", startSleep(eightHours)) // Tue - Sleep at: 21h for  8h
-CronExec("0 0 21 * * 3", startSleep(eightHours)) // Wed - Sleep at: 21h for  8h
-CronExec("0 0 21 * * 4", startSleep(eightHours)) // Thu - Sleep at: 21h for  8h
-CronExec("0 0 21 * * 5", startSleep(eightHours)) // Fri - Sleep at: 21h for  8h
-CronExec("0 0 23 * * 6", startSleep(tenHours))   // Sat - Sleep at: 23h for 10h
+CronExec("0 0 23 * * 0", newSleepCallback(tenHours))   // Sun - Sleep at: 23h for 10h
+CronExec("0 0 21 * * 1", newSleepCallback(eightHours)) // Mon - Sleep at: 21h for  8h
+CronExec("0 0 21 * * 2", newSleepCallback(eightHours)) // Tue - Sleep at: 21h for  8h
+CronExec("0 0 21 * * 3", newSleepCallback(eightHours)) // Wed - Sleep at: 21h for  8h
+CronExec("0 0 21 * * 4", newSleepCallback(eightHours)) // Thu - Sleep at: 21h for  8h
+CronExec("0 0 21 * * 5", newSleepCallback(eightHours)) // Fri - Sleep at: 21h for  8h
+CronExec("0 0 23 * * 6", newSleepCallback(tenHours))   // Sat - Sleep at: 23h for 10h
 <-OnQuitCh
