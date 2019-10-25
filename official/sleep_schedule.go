@@ -1,8 +1,8 @@
 // Put the bot to sleep at different time during the week.
 
 oneMinute      = 60
-oneHour        = 60 * oneMinute
 fifteenMinutes = 15 * oneMinute
+oneHour        = 60 * oneMinute
 eightHours     =  8 * oneHour
 tenHours       = 10 * oneHour
 
