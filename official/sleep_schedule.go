@@ -6,12 +6,12 @@ fifteenMinutes = 15 * oneMinute
 eightHours     =  8 * oneHour
 tenHours       = 10 * oneHour
 
-func newSleepCallback(period) {
+func newSleepCallback(duration) {
     return func() {
         Sleep(Random(0, fifteenMinutes * 1000)) // Random sleep 0-15min
         Print("Going to sleep for " + ShortDur(period))
         DisableNJA()
-        Sleep(period * 1000)
+        Sleep(duration * 1000)
         EnableNJA()
         Print("Waking up")
     }
