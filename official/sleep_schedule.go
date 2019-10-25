@@ -1,11 +1,14 @@
 // Put the bot to sleep at different time during the week.
 
-eightHours = 8 * 60 * 60
-tenHours = 10 * 60 * 60
+oneMinute      = 60
+oneHour        = 60 * oneMinute
+fifteenMinutes = 15 * oneMinute
+eightHours     =  8 * oneHour
+tenHours       = 10 * oneHour
 
 func startSleep(period) {
     return func() {
-        Sleep(Random(0, 1000 * 60 * 15)) // Random sleep 0-15min
+        Sleep(Random(0, fifteenMinutes * 1000)) // Random sleep 0-15min
         Print("Going to sleep for " + ShortDur(period))
         DisableNJA()
         Sleep(period * 1000)
