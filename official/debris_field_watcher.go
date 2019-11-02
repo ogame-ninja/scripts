@@ -8,7 +8,8 @@ for {
         break
     }
     if planetInfo.Debris.RecyclersNeeded == 0 {
-        SendTelegram(TELEGRAM_CHAT_ID, "Debris field is gone")
+        hour, min, sec = Clock()
+        Print("Debris field is gone at " + hour + "h" + min + "m" + sec)
         break
     }
     Sleep(delaySecs * 1000)
