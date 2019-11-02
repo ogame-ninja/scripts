@@ -5,6 +5,7 @@
 
 ## Official scripts
 
+[Debris field watcher](official/debris_field_watcher.go)  
 [Handle telegram messages](official/handle_telegram_msg.go)  
 [Automatically buy the offer of the day](official/buy_offer_of_the_day.go)  
 [Repatriate attacking ships from all colonies to the main planet](official/repat_att_ships.go)  
