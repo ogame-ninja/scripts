@@ -18,7 +18,7 @@ checkInterval = 10  // Check every 10 min
 Planets = GetPlanets()
 researches = GetResearch()
 hypertech = researches.HyperspaceTechnology
-largeCargoCap = 0.05*hypertech*5000 + 5000
+smallCargoCap = 0.05*hypertech*5000 + 5000
 for {
     for planet in Planets {
         celestial = GetCachedCelestial(planet.Coordinate)
@@ -34,10 +34,10 @@ for {
         //Only build when no ships already being build
         productionLine = GetProduction(planet.ID)[0]
         if(len(productionLine) == 0 && totalRes > totalShipsCapacity){
-            LargeCargosToBuild = Round((totalRes-totalShipsCapacity)/largeCargoCap)
-            celestial.Build(SMALLCARGO,LargeCargosToBuild)  
+            SmallCargosToBuild = Round((totalRes-totalShipsCapacity)/smallCargoCap)
+            celestial.Build(SMALLCARGO, SmallCargosToBuild)  
             print("Too few capacity to save all the ressources")
-            print("Build Large Cargo on planet: "+planet.Coordinate)
+            print("Build Small Cargo on planet: "+planet.Coordinate)
         }
     }
     Sleep(checkInterval * 60 * 1000) // Sleep 10min
