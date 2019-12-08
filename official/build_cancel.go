@@ -4,7 +4,7 @@ wantedBuildingID = FUSIONREACTOR
 //------------------------------------
 
 buildingID, buildingCountdown, _, _ = origin.ConstructionsBeingBuilt()
-if buildingID.Int() != 0 {
+if buildingID.Int64() != 0 {
     LogError("Building already being built", buildingID)
     return
 }
