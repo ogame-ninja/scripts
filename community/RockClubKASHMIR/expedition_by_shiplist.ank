@@ -54,5 +54,6 @@ if origin != nil {
                 GetSlots()
             }
         }
+        if System >= toSystem {System = fromSystem-1}
     }
 } else {Print("You don't have any ships from the desired list of ships!")}
