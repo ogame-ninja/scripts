@@ -1,0 +1,56 @@
+//---This script is created by RockClubKASHMIR---
+
+fromSystem = 1 // Your can change this as you wish
+toSystem = 499 // Your can change this as you wish
+nr = 1 // if nr = 1, the script will search debris for minimum 2 Recyclers. You can change it to any value you want
+//=== Please, DO NOT change anything below! ===
+i = 1
+origin = nil
+flts = 0
+
+for celestial in GetCachedCelestials() {
+    ships, _ = celestial.GetShips()
+    if ships.Recycler > 0 {
+        if ships.Recycler > flts {
+            flts = ships.Recycler
+            origin = celestial.Coordinate // Your Planet(or Moon), with more Recyclers
+        }
+    }
+}
+
+if origin != nil {
+    Print("Your origin is "+origin)
+    for system = fromSystem; system <= toSystem; system++ {
+        systemInfos, err = GalaxyInfos(origin.Galaxy, system)
+        planetInfo = systemInfos.Position(i)
+        if GetSlots().InUse < GetSlots().Total {
+            if planetInfo != nil {
+                Print(planetInfo.Coordinate)
+                if planetInfo.Debris.RecyclersNeeded > nr { 
+                    Print("Found Metal:"+planetInfo.Debris.Metal+" and Crystal:"+planetInfo.Debris.Crystal+" at "+planetInfo.Coordinate+", need "+planetInfo.Debris.RecyclersNeeded+" Recyclers!")
+                    f = NewFleet()
+                    f.SetOrigin(origin)
+                    f.SetDestination(planetInfo.Coordinate)
+                    f.SetSpeed(HUNDRED_PERCENT)
+                    f.SetMission(RECYCLEDEBRISFIELD)
+                    f.AddShips(RECYCLER, planetInfo.Debris.RecyclersNeeded)
+                    a, b = f.SendNow()
+                    if b == nil {
+                        Print(planetInfo.Debris.RecyclersNeeded+" Recyclers are sended successfully!")
+                        SendTelegram(TELEGRAM_CHAT_ID, planetInfo.Debris.RecyclersNeeded+" Recyclers are sended successfully!")
+                    } else {SendTelegram(TELEGRAM_CHAT_ID, "The fleet is NOT sended! "+b); break}
+                }
+            } else {Print("Wrong coordinates! Skeeping...")}
+            if i < 15 {
+                i++
+            } else {i = 1}
+            Sleep(Random(1000, 2000))
+        } else {
+            for GetSlots().InUse == GetSlots().Total {
+                Print("All Fleet slots are busy now! Please, wait "+ShortDur(120))
+                Sleep(120000)
+                GetSlots()
+            }
+        }
+    }
+} else {Print("You don't have any ships from the desired list of ships!")}
