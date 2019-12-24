@@ -7,7 +7,7 @@ origin = nil
 flts = 0
 nbr = 0
 err = 0
-slots = GetSlots().InUse
+slots = GetSlots().InUse+GetFleetSlotsReserved()
 //----
 for celestial in GetCachedCelestials() {
     ships, _ = celestial.GetShips()
@@ -57,7 +57,7 @@ if origin != nil {
                     Print("Please wait till ships lands! Recheck after "+ShortDur(120))
                     Sleep(120000)
                     ships, _ = origin.GetShips()
-                    if ships.Pathfinder > 0 {slots = GetSlots().InUse}
+                    if ships.Pathfinder > 0 {slots = GetSlots().InUse+GetFleetSlotsReserved()}
                 } else {
                     Print("All Fleet slots are busy now! Please, wait "+ShortDur(120))
                     Sleep(120000)
