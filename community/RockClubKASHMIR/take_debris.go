@@ -3,6 +3,7 @@
 fromSystem = 1 // Your can change this value as you wish
 toSystem = 499 // Your can change this value as you wish
 Rnbr = 1  // When Rnbr = 1, the script will search only debris for minimum 2 Recyclers. You can change this value as you wish
+SlotsReserved = 2 // Your can change this value as you wish
 //----
 curSystem = fromSystem
 origin = nil
@@ -10,7 +11,7 @@ flts = 0
 nbr = 0
 err = 0
 i = 1
-slots = GetSlots().InUse+GetFleetSlotsReserved()
+
 for celestial in GetCachedCelestials() {
     ships, _ = celestial.GetShips()
     if ships.Recycler > flts {
@@ -21,6 +22,7 @@ for celestial in GetCachedCelestials() {
 if origin != nil {
     Print("Your origin is "+origin.Coordinate)
     for system = fromSystem; system <= toSystem; system++ {
+        slots = GetSlots().InUse+SlotsReserved
         systemInfos, err = GalaxyInfos(origin.GetCoordinate().Galaxy, system)
         planetInfo = systemInfos.Position(i)
         if slots < GetSlots().Total {
@@ -61,11 +63,11 @@ if origin != nil {
                     Print("Please wait till ships lands! Recheck after "+ShortDur(2*60))
                     Sleep(2*60*1000)
                     ships, _ = origin.GetShips()
-                    if ships.Recycler > 0 {slots = GetSlots().InUse+GetFleetSlotsReserved()}
+                    if ships.Recycler > 0 {slots = GetSlots().InUse+SlotsReserved}
                 } else {
                     Print("All Fleet slots are busy now! Please, wait "+ShortDur(2*60))
                     Sleep(2*60*1000)
-                    slots = GetSlots().InUse
+                    slots = GetSlots().InUse+SlotsReserved
                 }
             }
         }
