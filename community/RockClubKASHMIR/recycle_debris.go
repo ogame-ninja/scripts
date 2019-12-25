@@ -19,5 +19,59 @@ for celestial in GetCachedCelestials() {
     }
 }
 if origin != nil {
-    
-} else {Print("You don't have any ships from the desired list of ships!")}
+    Print("Your origin is "+origin.Coordinate)
+    for system = fromSystem; system <= toSystem; system++ {
+        systemInfos, err = GalaxyInfos(origin.GetCoordinate().Galaxy, system)
+        planetInfo = systemInfos.Position(i)
+        if slots < GetSlots().Total {
+            if planetInfo != nil {
+                Print("Checking "+planetInfo.Coordinate)
+                if planetInfo.Debris.RecyclersNeeded > Rnbr { 
+                    ships, _ = origin.GetShips()
+                    Print("Found Metal:"+planetInfo.Debris.Metal+" and Crystal:"+planetInfo.Debris.Crystal+" at "+planetInfo.Coordinate+", need "+planetInfo.Debris.RecyclersNeeded+" Recyclers!")
+                    Sleep(Random(6*1000, 12*1000))
+                    f = NewFleet()
+                    f.SetOrigin(origin)
+                    f.SetDestination(planetInfo.Coordinate)
+                    f.SetSpeed(HUNDRED_PERCENT)
+                    f.SetMission(RECYCLEDEBRISFIELD)
+                    if planetInfo.Debris.RecyclersNeeded > ships.Recycler {
+                        nbr = ships.Recycler
+                    } else {nbr = planetInfo.Debris.RecyclersNeeded}
+                    f.AddShips(RECYCLER, nbr)
+                    a, err = f.SendNow()
+                    if err == nil {
+                        Print(nbr+" Pathfinders are sended successfully!")
+                        SendTelegram(TELEGRAM_CHAT_ID, nbr+" Pathfinders are sended successfully!")
+                    } else {
+                        Print("The fleet is NOT sended! "+err)
+                        SendTelegram(TELEGRAM_CHAT_ID, "The fleet is NOT sended! "+err)
+                        curSystem = system-1
+                        slots = GetSlots().Total
+                    }
+                }
+            }
+            if i < 15 {
+            i++
+            } else {i = 1}
+            
+        } else {
+            for slots == GetSlots().Total {
+                if err != 0 {
+                    Print("Please wait till ships lands! Recheck after "+ShortDur(2*60))
+                    Sleep(2*60*1000)
+                    ships, _ = origin.GetShips()
+                    if ships.Recycler > 0 {slots = GetSlots().InUse+GetFleetSlotsReserved()}
+                } else {
+                    Print("All Fleet slots are busy now! Please, wait "+ShortDur(2*60))
+                    Sleep(2*60*1000)
+                    slots = GetSlots().InUse
+                }
+            }
+        }
+        if system >= toSystem {
+            curSystem = fromSystem-1
+            system = curSystem
+        }
+    }
+} else {Print("You don't have Recyclers on your Planets/Moons!")}
