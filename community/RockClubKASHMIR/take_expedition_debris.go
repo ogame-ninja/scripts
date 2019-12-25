@@ -7,7 +7,6 @@ origin = nil
 flts = 0
 nbr = 0
 err = 0
-slots = GetSlots().InUse+GetFleetSlotsReserved()
 //----
 for celestial in GetCachedCelestials() {
     ships, _ = celestial.GetShips()
@@ -21,6 +20,7 @@ for celestial in GetCachedCelestials() {
 if origin != nil {
     Print("Your origin is "+origin.Coordinate)
     for system = curSystem; system <= toSystem; system++ {
+        slots = GetSlots().InUse+GetFleetSlotsReserved()
         systemInfo, _ = GalaxyInfos(origin.GetCoordinate().Galaxy, system)
         Dtarget, _ = ParseCoord(origin.GetCoordinate().Galaxy+":"+system+":"+16)
         if slots < GetSlots().Total {
@@ -61,7 +61,7 @@ if origin != nil {
                 } else {
                     Print("All Fleet slots are busy now! Please, wait "+ShortDur(120))
                     Sleep(120000)
-                    slots = GetSlots().InUse
+                    slots = GetSlots().InUse+GetFleetSlotsReserved()
                 }
             }
         }
