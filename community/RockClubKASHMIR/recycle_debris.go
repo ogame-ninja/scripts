@@ -10,7 +10,6 @@ flts = 0
 nbr = 0
 err = 0
 i = 1
-slots = GetSlots().InUse+GetFleetSlotsReserved()
 for celestial in GetCachedCelestials() {
     ships, _ = celestial.GetShips()
     if ships.Recycler > flts {
@@ -21,6 +20,7 @@ for celestial in GetCachedCelestials() {
 if origin != nil {
     Print("Your origin is "+origin.Coordinate)
     for system = fromSystem; system <= toSystem; system++ {
+        slots = GetSlots().InUse+GetFleetSlotsReserved()
         systemInfos, err = GalaxyInfos(origin.GetCoordinate().Galaxy, system)
         planetInfo = systemInfos.Position(i)
         if slots < GetSlots().Total {
