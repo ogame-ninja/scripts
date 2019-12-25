@@ -10,7 +10,6 @@ flts = 0
 nbr = 0
 err = 0
 i = 1
-slots = GetSlots().InUse+GetFleetSlotsReserved()
 for celestial in GetCachedCelestials() {
     ships, _ = celestial.GetShips()
     if ships.Recycler > flts {
@@ -21,15 +20,17 @@ for celestial in GetCachedCelestials() {
 if origin != nil {
     Print("Your origin is "+origin.Coordinate)
     for system = fromSystem; system <= toSystem; system++ {
+        slots = GetSlots().InUse+GetFleetSlotsReserved()
         systemInfos, err = GalaxyInfos(origin.GetCoordinate().Galaxy, system)
         planetInfo = systemInfos.Position(i)
         if slots < GetSlots().Total {
             if planetInfo != nil {
+                Sleep(Random(1000, 2000)) // For more human reation...
                 Print("Checking "+planetInfo.Coordinate)
                 if planetInfo.Debris.RecyclersNeeded > Rnbr { 
                     ships, _ = origin.GetShips()
                     Print("Found Metal:"+planetInfo.Debris.Metal+" and Crystal:"+planetInfo.Debris.Crystal+" at "+planetInfo.Coordinate+", need "+planetInfo.Debris.RecyclersNeeded+" Recyclers!")
-                    Sleep(Random(6*1000, 12*1000))
+                    Sleep(Random(6*1000, 12*1000)) // Pause between 6 and 12 seconds
                     f = NewFleet()
                     f.SetOrigin(origin)
                     f.SetDestination(planetInfo.Coordinate)
@@ -59,12 +60,12 @@ if origin != nil {
             for slots == GetSlots().Total {
                 if err != 0 {
                     Print("Please wait till ships lands! Recheck after "+ShortDur(2*60))
-                    Sleep(2*60*1000)
+                    Sleep(2*60*1000) // 2 minutes
                     ships, _ = origin.GetShips()
                     if ships.Recycler > 0 {slots = GetSlots().InUse+GetFleetSlotsReserved()}
                 } else {
                     Print("All Fleet slots are busy now! Please, wait "+ShortDur(2*60))
-                    Sleep(2*60*1000)
+                    Sleep(2*60*1000) // 2 minutes
                     slots = GetSlots().InUse
                 }
             }
