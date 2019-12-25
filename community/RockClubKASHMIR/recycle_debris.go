@@ -54,7 +54,6 @@ if origin != nil {
             if i < 15 {
             i++
             } else {i = 1}
-            
         } else {
             for slots == GetSlots().Total {
                 if err != 0 {
