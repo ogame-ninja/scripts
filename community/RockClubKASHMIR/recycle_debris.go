@@ -41,11 +41,11 @@ if origin != nil {
                     f.AddShips(RECYCLER, nbr)
                     a, err = f.SendNow()
                     if err == nil {
-                        Print(nbr+" Pathfinders are sended successfully!")
-                        SendTelegram(TELEGRAM_CHAT_ID, nbr+" Pathfinders are sended successfully!")
+                        Print(nbr+" Recyclers are sended successfully!")
+                        SendTelegram(TELEGRAM_CHAT_ID, nbr+" Recyclers are sended successfully!")
                     } else {
-                        Print("The fleet is NOT sended! "+err)
-                        SendTelegram(TELEGRAM_CHAT_ID, "The fleet is NOT sended! "+err)
+                        Print("The Recyclers are NOT sended! "+err)
+                        SendTelegram(TELEGRAM_CHAT_ID, "The Recyclers are NOT sended! "+err)
                         curSystem = system-1
                         slots = GetSlots().Total
                     }
