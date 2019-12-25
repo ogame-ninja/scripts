@@ -65,7 +65,7 @@ if origin != nil {
                 } else {
                     Print("All Fleet slots are busy now! Please, wait "+ShortDur(2*60))
                     Sleep(2*60*1000)
-                    slots = GetSlots().InUse
+                    slots = GetSlots().InUse+GetFleetSlotsReserved()
                 }
             }
         }
