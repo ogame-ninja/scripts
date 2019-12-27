@@ -8,13 +8,13 @@ curSystem = fromSystem
 origin = nil
 master = 0
 nbr = 0
-err = 0
-slots = GetSlots().ExpInUse
+err = nil
+totalSlots = GetSlots().ExpTotal
 for celestial in GetCachedCelestials() {
     ships, _ = celestial.GetShips()
     flts = 0
     for ShipID in shipsList {
-        if ships.ByID(ShipID) > 0 {
+        if ships.ByID(ShipID) != 0 {
             flts = flts + ships.ByID(ShipID)
         }
     }
@@ -27,9 +27,11 @@ if origin != nil {
     Print("Your origin is "+origin.Coordinate)
     for system = curSystem; system <= toSystem; system++ {
         Destination = NewCoordinate(origin.GetCoordinate().Galaxy, system, 16, PLANET_TYPE)
-        if slots < GetSlots().ExpTotal {
-            ships, _ = origin.GetShips()
+        slots = GetSlots().ExpInUse
+        if err != nil {slots = totalSlots}
+        if slots < totalSlots {
             if Destination != 0 {
+                ships, _ = origin.GetShips()
                 Sleep(Random(6000, 10000))
                 f = NewFleet()
                 f.SetOrigin(origin)
@@ -37,7 +39,7 @@ if origin != nil {
                 f.SetSpeed(HUNDRED_PERCENT)
                 f.SetMission(EXPEDITION)
                 for id, nbr in shipsList {
-                    if ships.ByID(id) > 0 {
+                    if ships.ByID(id) != 0 {
                         if ships.ByID(id) < nbr {nbr = ships.ByID(id)}
                         f.AddShips(id, nbr)
                     }
@@ -45,12 +47,9 @@ if origin != nil {
                 a, err = f.SendNow()
                 if err == nil {
                     Print("The ships are sended successfully to "+Destination)
-                    SendTelegram(TELEGRAM_CHAT_ID, "The ships are sended successfully to "+Destination)
                 } else {
                     Print("The fleet is NOT sended! "+err)
                     SendTelegram(TELEGRAM_CHAT_ID, "The fleet is NOT sended! "+err)
-                    curSystem = system-1
-                    slots = GetSlots().ExpTotal
                 }
             }
         } else {
@@ -60,7 +59,7 @@ if origin != nil {
                     Sleep(120000)
                     ships, _ = origin.GetShips()
                     for ShipID in shipsList {
-                        if ships.ByID(ShipID) > 0 {slots = GetSlots().ExpInUse}
+                        if ships.ByID(ShipID) != 0 {slots = GetSlots().ExpInUse}
                     }
                 } else {
                     Print("All Fleet slots are busy now! Please, wait "+ShortDur(2*60))
@@ -68,6 +67,7 @@ if origin != nil {
                     slots = GetSlots().ExpInUse
                 }
             }
+            curSystem = system-1
         }
         if system >= toSystem {
             curSystem = fromSystem-1
