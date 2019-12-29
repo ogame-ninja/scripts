@@ -1,15 +1,17 @@
 //==== This script is created by RockClubKASHMIR ====
 
-fromSystem = 1 // Your can change this value as you wish
-toSystem = 200 // Your can change this value as you wish
+fromSystem = 1 // Your can change this value as you want
+toSystem = 200 // Your can change this value as you want
 shipsList = {LARGECARGO: 200, ESPIONAGEPROBE: 11, BOMBER: 1, DESTROYER: 1}// Your can change ENTYRE List, even to left only 1 type of ships!
+DurationOfExpedition = 1 // 1 for one hour, 2 for two hours... set this value from 1, to the number you want
+
 //-------
 curSystem = fromSystem
 origin = nil
 master = 0
 nbr = 0
 err = nil
-totalSlots = GetSlots().ExpTotal
+// Start to Search highest amount of ships from your list to all your Planets and Moons(if you have some)
 for celestial in GetCachedCelestials() {
     ships, _ = celestial.GetShips()
     flts = 0
@@ -20,19 +22,27 @@ for celestial in GetCachedCelestials() {
     }
     if flts > master {
         master = flts
-        origin = celestial // Your Planet(or Moon) with highest amount of ships by your list of ships
+        origin = celestial // Your Planet(or Moon) with highest amount of ships from the list of ships
     }
 }
 if origin != nil {
     Print("Your origin is "+origin.Coordinate)
+    if toSystem > 499 || toSystem == 0 {toSystem = -1}
+    if fromSystem > toSystem {Print("Please, type correctly fromSystem and/or toSystem!")}
     for system = curSystem; system <= toSystem; system++ {
-        Destination = NewCoordinate(origin.GetCoordinate().Galaxy, system, 16, PLANET_TYPE)
-        slots = GetSlots().ExpInUse
+        systemInfos, b = GalaxyInfos(origin.GetCoordinate().Galaxy, system)
+        Destination, _ = ParseCoord(origin.GetCoordinate().Galaxy+":"+system+":"+16)
+        totalSlots = GetSlots().Total - GetFleetSlotsReserved()
+        slots = GetSlots().InUse
+        if slots < totalSlots {
+            slots = GetSlots().ExpInUse
+            totalSlots = GetSlots().ExpTotal
+        }
         if err != nil {slots = totalSlots}
-        if slots < GetSlots().ExpTotal {
-            ships, _ = origin.GetShips()
-            if Destination != 0 {
-                Sleep(Random(6000, 10000))
+        if slots < totalSlots {
+            if b == nil {
+                ships, _ = origin.GetShips()
+                Sleep(Random(8*1000, 12*1000)) // For avoiding ban
                 f = NewFleet()
                 f.SetOrigin(origin)
                 f.SetDestination(Destination)
@@ -44,19 +54,18 @@ if origin != nil {
                         f.AddShips(id, nbr)
                     }
                 }
+                f.SetDuration(DurationOfExpedition)
                 a, err = f.SendNow()
                 if err == nil {
                     Print("The ships are sended successfully to "+Destination)
-                    SendTelegram(TELEGRAM_CHAT_ID, "The ships are sended successfully to "+Destination)
                 } else {
                     Print("The fleet is NOT sended! "+err)
                     SendTelegram(TELEGRAM_CHAT_ID, "The fleet is NOT sended! "+err)
-                    curSystem = system-1
                 }
             }
         } else {
-            for slots == GetSlots().ExpTotal {
-                if err != 0 {
+            for slots == totalSlots {
+                if err != nil {
                     Print("Please wait till ships lands! Recheck after "+ShortDur(2*60))
                     Sleep(2*60*1000)
                     ships, _ = origin.GetShips()
@@ -70,10 +79,16 @@ if origin != nil {
                     slots = GetSlots().ExpInUse
                 }
             }
+            curSystem = system-1
         }
-        if system >= toSystem {
-            curSystem = fromSystem-1
-            system = curSystem
+        if b == nil {
+            if system >= toSystem {
+                curSystem = fromSystem-1
+                system = curSystem
+            }
+        } else {
+            Print("Please, type correctly fromSystem and/or toSystem!")
+            break
         }
     }
-} else {Print("You don't have ships from the Ships list on your Planets/Moons!")}
+} else {Print("Not found any ships from the List of ships on your Planets/Moons!")}
