@@ -1,0 +1,181 @@
+//sry my english is trash is in german written
+//Auto Bauer Deffens / Schiffe
+
+
+
+// Einstellungen----------------------------------------------------------------
+factors = [1,1,1,1,1,1,1,1,1,1,1] // Beispiel für 10 Planeten 3 Baut das 3 fache der eingestellten Werte 0 buat 0 der Eingestellten Werte 
+
+//Baut die unten eingestellten Werte. Planet 3 wird nix bauen. Planet 1 wird das 3 fache bauen.
+
+// Anzahl Deff / Schiffe auf Planeten (immer nach bau auf Anzahl X)
+//------------------------------------------------------------------------------
+//Verteidigung
+rocket_launcher_desired = 1    //Raketenwerfer
+light_laser_desired= 1         //LeichteLaser
+heavy_laser_desired= 1         //Schwere Läser
+gauss_cannon_desired= 1        //Gaußkanone
+ion_cannon_desired=  1         //Ionengeschütz
+plasma_desired= 1              //Plasmawerfer
+anti_balistic_desired = 0      //Abfangraketen
+//------------------------------------------------------------------------------
+//Schildkuppeln werden immer Gebaut!
+//------------------------------------------------------------------------------
+//Kampfschiffe
+light_fighter_desired = 1000     //Leichte Jäger
+heavy_fighter_desired = 5000      //Schwere Jäger
+cruiser_desired = 2500            //Kreuzer
+battleship_desired = 1250         //Schlachtschiff
+battlecruiser_desired = 625      //Schlachtkreuzer
+bomber_desired = 0             //Bomber
+destroyer_desired = 500          //Zerstörer
+deathstar_desired = 0          //Todesstern - R.I.P 
+reaper_desired = 250             //Reaper (Genberal Benötigt)
+pathfinder_desired = 0         //Pathfinder (Explorer benötigt)
+//------------------------------------------------------------------------------
+//Zivileschiffe
+small_cargo_desired = 1000        //Kleine Transporter
+large_cargo_desired = 500        //Große Transporter
+colony_ship_desired = 0        //Kolonieschiff
+recycler_desired = 1000           //Recycler
+espionage_probe_desired = 500    //Spionagesonde
+solar_satteliet_desired = 0    //SolarSatellite
+crawler_desired = 0            //Crawler  (Kollector benötigt)
+//------------------------------------------------------------------------------
+checkInterval = 5 // Checkt alle 5 minuten die Verteidigung und Flotten Stärke
+storageInterval = 10  // Checkt alle 10 min ob Speicher gebaut werden müssen 
+// Einstellungen Ende-----------------------------------------------------------
+
+Planets = GetPlanets()
+
+//ERROR AUSGABE
+//Gibt den Fehler aus und Stopt das script bei einem Fehler
+if(len(factors) != len(Planets)){
+    print("Die Anzahl deiner factoren und Planeten stimmen nicht überein!!")
+}
+factors[len(Planets)-1]
+
+for{
+    i=0;
+    for planet in Planets {
+        celestial = GetCachedCelestial(planet.Coordinate)
+        allDefense, _ = celestial.GetDefense()
+        allShips, _ = celestial.GetShips()
+        
+        productionLine = GetProduction(planet.ID)[0]
+        if(len(productionLine)) == 0{
+            //Verteidigung auto bau --------------------------------------------
+             if(allDefense.RocketLauncher < Round(rocket_launcher_desired * factors[i])){
+                celestial.Build(ROCKETLAUNCHER, Round(rocket_launcher_desired * factors[i]) - allDefense.RocketLauncher)
+            }
+            if(allDefense.LightLaser <  Round(light_laser_desired*factors[i])){
+                 celestial.Build(LIGHTLASER,Round(light_laser_desired*factors[i])- allDefense.LightLaser)
+            }
+            if(allDefense.HeavyLaser < Round(heavy_laser_desired*factors[i])){
+                 celestial.Build(HEAVYLASER,Round(heavy_laser_desired*factors[i])- allDefense.HeavyLaser)
+            }
+            if(allDefense.GaussCannon < Round(gauss_cannon_desired*factors[i])){
+                celestial.Build(GAUSSCANNON,Round(gauss_cannon_desired*factors[i])- allDefense.GaussCannon)
+            }
+            if(allDefense.IonCannon< Round(ion_cannon_desired*factors[i])){
+                celestial.Build(IONCANNON,Round(ion_cannon_desired*factors[i]) - allDefense.IonCannon)
+            }
+            if(allDefense.PlasmaTurret< Round(plasma_desired*factors[i])){
+                celestial.Build(PLASMATURRET,Round(plasma_desired*factors[i])- allDefense.PlasmaTurret)
+            }
+            if(allDefense.SmallShieldDome == 0){
+               celestial.Build(SMALLSHIELDDOME,1)
+            }
+            if(allDefense.LargeShieldDome == 0){
+                celestial.Build(LARGESHIELDDOME,1)
+            }
+            if(allDefense.AntiBallisticMissiles  < Round(anti_balistic_desired*factors[i])){
+               celestial.Build(ANTIBALLISTICMISSILES,Round(anti_balistic_desired*factors[i]) - allDefense.AntiBallisticMissiles )
+            }
+            //Kampf Schiffe auto bau -------------------------------------------
+            if(allShips.LightFighter < Round(light_fighter_desired * factors[i])){
+                celestial.Build(LIGHTFIGHTER, Round(light_fighter_desired * factors[i]) - allShips.LightFighter)               
+            }
+            if(allShips.HeavyFighter < Round(heavy_fighter_desired * factors[i])){
+                celestial.Build(HEAVYFIGHTER, Round(heavy_fighter_desired * factors[i]) - allShips.HeavyFighter)               
+            }
+            if(allShips.Cruiser < Round(cruiser_desired * factors[i])){
+                celestial.Build(CRUISER, Round(cruiser_desired * factors[i]) - allShips.Cruiser)               
+            }   
+            if(allShips.Battleship < Round(battleship_desired * factors[i])){
+                celestial.Build(BATTLESHIP, Round(battleship_desired * factors[i]) - allShips.Battleship)               
+            }            
+            if(allShips.Battlecruiser < Round(battlecruiser_desired * factors[i])){
+                celestial.Build(BATTLECRUISER, Round(battlecruiser_desired * factors[i]) - allShips.Battlecruiser)               
+            }
+            if(allShips.Bomber < Round(bomber_desired * factors[i])){
+                celestial.Build(BOMBER, Round(bomber_desired * factors[i]) - allShips.Bomber)               
+            } 
+            if(allShips.Destroyer < Round(destroyer_desired * factors[i])){
+                celestial.Build(DESTROYER, Round(destroyer_desired * factors[i]) - allShips.Destroyer)               
+            }
+            if(allShips.Deathstar < Round(deathstar_desired * factors[i])){
+                celestial.Build(DEATHSTAR, Round(deathstar_desired * factors[i]) - allShips.Deathstar)               
+            } 
+            if(allShips.Reaper < Round(reaper_desired * factors[i])){
+                celestial.Build(REAPER, Round(reaper_desired * factors[i]) - allShips.Reaper)               
+            }            
+            if(allShips.Pathfinder < Round(pathfinder_desired * factors[i])){
+                celestial.Build(PATHFINDER, Round(pathfinder_desired * factors[i]) - allShips.Pathfinder)               
+            }
+            if(allShips.Reaper < Round(reaper_desired * factors[i])){
+                celestial.Build(REAPER, Round(reaper_desired * factors[i]) - allShips.Reaper)               
+            }
+            //Zivile Schiffe auto bau ------------------------------------------
+            if(allShips.SmallCargo < Round(small_cargo_desired * factors[i])){
+                celestial.Build(SMALLCARGO, Round(small_cargo_desired * factors[i]) - allShips.SmallCargo)               
+            }//---------------------------------------
+             if(allShips.LargeCargo < Round(large_cargo_desired * factors[i])){
+                celestial.Build(LARGECARGO, Round(large_cargo_desired * factors[i]) - allShips.LargeCargo)               
+            }
+             if(allShips.ColonyShip < Round(colony_ship_desired * factors[i])){
+                celestial.Build(COLONYSHIP, Round(colony_ship_desired * factors[i]) - allShips.ColonyShip)               
+            }
+             if(allShips.Recycler < Round(recycler_desired * factors[i])){
+                celestial.Build(RECYCLER, Round(recycler_desired * factors[i]) - allShips.Recycler)               
+            }
+             if(allShips.EspionageProbe < Round(espionage_probe_desired * factors[i])){
+                celestial.Build(ESPIONAGEPROBE, Round(espionage_probe_desired * factors[i]) - allShips.EspionageProbe)               
+            }
+             if(allShips.SolarSatellite < Round(solar_satteliet_desired * factors[i])){
+                celestial.Build(SOLARSATELLITE, Round(solar_satteliet_desired * factors[i]) - allShips.SolarSatellite)               
+            }
+             if(allShips.Crawler < Round(crawler_desired * factors[i])){
+                celestial.Build(CRAWLER, Round(crawler_desired * factors[i]) - allShips.Crawler)               
+            }
+        }
+        i = i+1
+    }
+   Sleep(checkInterval * 60 * 1000) 
+}
+
+Planets = GetPlanets()
+
+for {
+    for planet in Planets {
+        celestial = GetCachedCelestial(planet.Coordinate)
+        buildingID, buildingCountdown, researchID, researchCountdown = celestial.ConstructionsBeingBuilt()
+        
+        if(buildingCountdown == 0){
+            resources, err = GetResourcesDetails(celestial.GetID())
+            if(resources.Metal.Available >= resources.Metal.StorageCapacity){
+                Build(celestial.GetID(), METALSTORAGE, 0) 
+                print("Build Metall storage on: " + planet)
+            }
+            if(resources.Crystal.Available >= resources.Crystal.StorageCapacity){
+                Build(celestial.GetID(), CRYSTALSTORAGE, 0) 
+                print("Build Crystal storage on: " + planet)
+            }
+            if(resources.Deuterium.Available >= resources.Deuterium.StorageCapacity){
+                Build(celestial.GetID(), DEUTERIUMTANK, 0) 
+                print("Build Deuterium storage on: " + planet)
+            }
+        }
+    }
+    Sleep(storageInterval * 60 * 1000) 
+}
