@@ -22,13 +22,6 @@ func sendExpedition() {
     return fleet.SendNow()
 }
 
-func min(a, b) {
-    if a < b {
-        return a
-    }
-    return b
-}
-
 for {
     fleets, slots = GetFleets()
     
@@ -37,7 +30,7 @@ for {
     minSecs = bigNum
     for fleet in fleets {
         if fleet.Mission == EXPEDITION {
-            minSecs = min(fleet.BackIn, minSecs)
+            minSecs = Min(fleet.BackIn, minSecs)
         }
     }
     
@@ -50,9 +43,10 @@ for {
             break
         } else {
             Print(newFleet)
-            minSecs = min(newFleet.BackIn, minSecs)
+            minSecs = Min(newFleet.BackIn, minSecs)
             expeditionsPossible--
         }
+        Sleep(Random(10000, 20000))
     }
     
     // If we didn't found any expedition fleet and didn't create any, let's wait 5min
