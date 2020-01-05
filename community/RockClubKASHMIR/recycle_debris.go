@@ -1,10 +1,12 @@
 //==== This script is created by RockClubKASHMIR ====
 
-fromSystem = 1 // Your can change this value as you want
-toSystem = 200 // Your can change this value as you want
-Rnbr = 0  // When Rnbr = 1, the script will search debris for minimum 2 Recyclers. You can set this value from 0, to the number you want
-times = 1 // If times = 2, the script will scan 3 times the the entire galaxy, from system and to system you want. You can set this value from 0, to the number you want
-
+/* This script automatically find your Planet or Moon with highes amount of Recyclers
+ * No need to setup your planet!
+*/
+fromSystem = 1 // Your can change this value as you wish
+toSystem = 200 // Your can change this value as you wish
+Rnbr = 0  // If Rnbr = 1, the script will search only debris for minimum 2 Recyclers. You can change this value as you wish
+times = 1 // if times = 1, the script will full scan 2 times the galaxy, from system, to system you want. You can set this value from 0, to the number you want
 //----
 cycle = 0
 curSystem = fromSystem
@@ -29,47 +31,50 @@ if origin != nil {
     if toSystem > 499 || toSystem == 0 {toSystem = -1}
     if fromSystem > toSystem {Print("Please, type correctly fromSystem and/or toSystem!")}
     for system = curSystem; system <= toSystem; system++ {
-        Sleep(Random(500, 1500)) // For avoiding ban
         systemInfos, b = GalaxyInfos(origin.GetCoordinate().Galaxy, system)
         planetInfo = systemInfos.Position(i)
+        Sleep(Random(500, 1000)) // for avoid ban
         slots = GetSlots().InUse
         if err != nil {slots = totalSlots}
         if slots < totalSlots {
             if b == nil {
-                Print("Checking "+planetInfo.Coordinate)
-                if planetInfo.Debris.RecyclersNeeded > Rnbr { 
-                    ships, _ = origin.GetShips()
-                    if planetInfo.Debris.Metal == 0 && planetInfo.Debris.Crystal > 0 {Print("Found Crystal: "+planetInfo.Debris.Crystal)}
-                    if planetInfo.Debris.Metal > 0 && planetInfo.Debris.Crystal == 0 {Print("Found Metal: "+planetInfo.Debris.Metal)}
-                    if planetInfo.Debris.Metal > 0 && planetInfo.Debris.Crystal > 0 {Print("Found Metal: "+planetInfo.Debris.Metal+" and Crystal: "+planetInfo.Debris.Crystal)}
-                    f = NewFleet()
-                    f.SetOrigin(origin)
-                    f.SetDestination(planetInfo.Coordinate)
-                    f.SetSpeed(HUNDRED_PERCENT)
-                    f.SetMission(RECYCLEDEBRISFIELD)
-                    nbr = planetInfo.Debris.RecyclersNeeded
-                    if planetInfo.Debris.RecyclersNeeded > ships.Recycler {nbr = ships.Recycler}
-                    f.AddShips(RECYCLER, nbr)
-                    a, err = f.SendNow()
-                    if err == nil {
-                        if nbr < planetInfo.Debris.RecyclersNeeded {Print("You don't have enough Ships for this debris field!")}
-                        if nbr > 1 {
-                            Print(nbr+" Recyclers are sended successfully!")
-                        } else {Print(nbr+" Recycler is sended successfully!")}
-                    } else {
-                        if nbr > 1 {
-                            Print("The Recyclers are NOT sended! "+err)
-                            SendTelegram(TELEGRAM_CHAT_ID, "The Recyclers are NOT sended! "+err)
+                if planetInfo != nil {
+                    Print("Checking "+planetInfo.Coordinate)
+                    if planetInfo.Debris.RecyclersNeeded > Rnbr { 
+                        ships, _ = origin.GetShips()
+                        if planetInfo.Debris.Metal == 0 && planetInfo.Debris.Crystal > 0 {Print("Found Crystal: "+planetInfo.Debris.Crystal)}
+                        if planetInfo.Debris.Metal > 0 && planetInfo.Debris.Crystal == 0 {Print("Found Metal: "+planetInfo.Debris.Metal)}
+                        if planetInfo.Debris.Metal > 0 && planetInfo.Debris.Crystal > 0 {Print("Found Metal: "+planetInfo.Debris.Metal+" and Crystal: "+planetInfo.Debris.Crystal)}
+                        f = NewFleet()
+                        f.SetOrigin(origin)
+                        f.SetDestination(planetInfo.Coordinate)
+                        f.SetSpeed(HUNDRED_PERCENT)
+                        f.SetMission(RECYCLEDEBRISFIELD)
+                        if planetInfo.Debris.RecyclersNeeded > ships.Recycler {
+                            nbr = ships.Recycler
+                        } else {nbr = planetInfo.Debris.RecyclersNeeded}
+                        f.AddShips(RECYCLER, nbr)
+                        a, err = f.SendNow()
+                        if err == nil {
+                            if planetInfo.Debris.RecyclersNeeded > ships.Recycler {Print("You don't have enough Recyclers for these Debris field!")}
+                            if nbr > 1 {
+                                Print(nbr+" Recyclers are sended successfully!")
+                            } else {Print(nbr+" Recycler is sended successfully!")}
                         } else {
-                            Print("The Recycler is NOT sended! "+err)
-                            SendTelegram(TELEGRAM_CHAT_ID, "The Recycler is NOT sended! "+err)
+                            if nbr > 1 {
+                                Print("The Recyclers are NOT sended! "+err)
+                                SendTelegram(TELEGRAM_CHAT_ID, "The Recyclers are NOT sended! "+err)
+                            } else {
+                                Print("The Recycler is NOT sended! "+err)
+                                SendTelegram(TELEGRAM_CHAT_ID, "The Recycler is NOT sended! "+err)
+                            }
                         }
                     }
                 }
+                if i < 15 {
+                    i++
+                } else {i = 1}
             }
-            if i < 15 {
-                i++
-            } else {i = 1}
         } else {
             for slots == totalSlots {
                 if err != 0 {
