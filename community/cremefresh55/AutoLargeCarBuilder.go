@@ -29,7 +29,7 @@ for {
     
         //Calculate the total capacity of all the ships combined on a planet
         allShips, _ = celestial.GetShips()
-        totalShipsCapacity = allShips.Cargo(researches, false)
+        totalShipsCapacity = Cargo(allShips)
         
         //Only build when no ships already being build
         productionLine = GetProduction(planet.ID)[0]
