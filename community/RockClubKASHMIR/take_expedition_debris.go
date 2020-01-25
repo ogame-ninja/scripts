@@ -1,20 +1,18 @@
 //==== This script is created by RockClubKASHMIR ====
 
 //--- WARNING!!! This script can work ONLY if you are Discoverer! ---
+
 fromSystem = 1 // Your can change this value as you want
 toSystem = 200 // Your can change this value as you want
-Pnbr = 1  // When Pnbr = 1, the script will search debris for minimum 2 Pathfinders. You can set this value from 0, to the number you want
-times = 1 // if times = 1, the script will full scan 2 times the entire galaxy, from system, to system you set. You can set this value from 0, to the number you want
+Pnbr = 2  // When Pnbr = 2, the script will search debris for minimum 3 Pathfinders, but this is NOT mean that this is a Limit for Maximum Pathfinders! You can set this value from 0, to the number you want
 
 //----
-cycle = 0
 curSystem = fromSystem
 origin = nil
 flts = 0
 nbr = 0
 err = nil
 if (Pnbr < 0) {Pnbr = 0}
-if (times < 0) {times = 0}
 totalSlots = GetSlots().Total - GetFleetSlotsReserved()
 // Start to search highest amount of Pathfinders on all your Planets and Moons(if you have some)
 for celestial in GetCachedCelestials() {
@@ -70,14 +68,14 @@ if origin != nil {
         } else {
             for slots == totalSlots {
                 if err != 0 {
-                    Print("Please wait till ships lands! Recheck after "+ShortDur(2*60))
-                    Sleep(2*60*1000)
+                    Print("Please wait till ships lands! Recheck after "+ShortDur(4*60))
+                    Sleep(4*60*1000)
                     ships, _ = origin.GetShips()
                     if ships.Pathfinder > 0 {slots = GetSlots().InUse}
                     err = nil
                 } else {
-                    Print("All Fleet slots are busy now! Please, wait "+ShortDur(2*60))
-                    Sleep(2*60*1000)
+                    Print("All Fleet slots are busy now! Please, wait "+ShortDur(4*60))
+                    Sleep(4*60*1000)
                     slots = GetSlots().InUse
                 }
                 curSystem = system-1
@@ -85,23 +83,13 @@ if origin != nil {
         }
         if b == nil {
             if system >= toSystem {
-                if times > 0 {
-                    if cycle < times {
-                        cycle++
-                        if nbr == 0 {Print("Not found any debris! Start searching again...")}
-                        curSystem = fromSystem-1
-                        system = curSystem
-                        Sleep(4000)
-                    } else {
-                        Print("You made "+(times+1)+" times full scan all systems chosen by you! The script turns off")
-                        SendTelegram(TELEGRAM_CHAT_ID, "You made "+(times+1)+" times full scan all systems chosen by you! The script turns off")
-                        break
-                    }
-                } else {
-                    Print("You made full scan all systems chosen by you! The script turns off")
-                    SendTelegram(TELEGRAM_CHAT_ID, "You made full scan all systems chosen by you! The script turns off")
-                    break
-                }
+                delay = Random(50*60, 90*60)
+                sleepDelay = delay*1000
+                Print("Will Start searching again after "+ShortDur(delay))
+                Sleep(sleepDelay)
+                Print("Start searching again...")
+                curSystem = fromSystem-1
+                system = curSystem
             }
         } else {
             Print("Please, type correctly fromSystem and/or toSystem!")
