@@ -1,8 +1,15 @@
 //==== This script is created by RockClubKASHMIR ====
 
+/* DESCRIPTION
+   This script find automatically your planet/moon with EXACTLY kind of ships AND their amount, set by you in the List of ships!
+  
+  ONLY if my automatic method of finding your moon/planet not satisfied you;
+  - replace all rows between // START and // END with origin = GetCachedCelestial("M:1:2:3") where on "M:1:2:3" must type your coordinate - M for the moon, P for planet
+*/
+
 fromSystem = 1 // Your can change this value as you want
 toSystem = 200 // Your can change this value as you want
-shipsList = {LARGECARGO: 200, ESPIONAGEPROBE: 11, BOMBER: 1, DESTROYER: 1}// Your can change ENTYRE List, even to left only 1 type of ships!
+shipsList = {LARGECARGO: 3000, LIGHTFIGHTER: 2000, ESPIONAGEPROBE: 2, CRUISER: 1000}// Your can change ENTYRE List, even to left only 1 type of ships!
 DurationOfExpedition = 1 // 1 for one hour, 2 for two hours... set this value from 1, to the number you want
 
 //-------
@@ -11,20 +18,27 @@ origin = nil
 master = 0
 nbr = 0
 err = nil
-// Start to Search highest amount of ships from your list to all your Planets and Moons(if you have some)
+// START
 for celestial in GetCachedCelestials() {
     ships, _ = celestial.GetShips()
+    slt = 0
     flts = 0
-    for ShipID in shipsList {
+    for ShipID, nbr in shipsList {
         if ships.ByID(ShipID) != 0 {
-            flts = flts + ships.ByID(ShipID)
+            if ships.ByID(ShipID) >= nbr {
+                flts = flts + ships.ByID(ShipID)
+                slt = slt + 1
+            }
         }
     }
-    if flts > master {
-        master = flts
-        origin = celestial // Your Planet(or Moon) with highest amount of ships from the list of ships
+    if slt == len(shipsList) {
+        if master == 0 || flts < master {
+            master = flts
+            origin = celestial // Your Planet(or Moon) with highest amount of ships from the list of ships
+        }
     }
 }
+// END
 if origin != nil {
     Print("Your origin is "+origin.Coordinate)
     if toSystem > 499 || toSystem == 0 {toSystem = -1}
