@@ -9,7 +9,7 @@
 
 fromSystem = 1 // Your can change this value as you want
 toSystem = 200 // Your can change this value as you want
-shipsList = {LARGECARGO: 3000, LIGHTFIGHTER: 2000, ESPIONAGEPROBE: 2, CRUISER: 1000}// Your can change ENTYRE List, even to left only 1 type of ships!
+shipsList = {LARGECARGO: 3000, LIGHTFIGHTER: 2000, ESPIONAGEPROBE: 2, CRUISER: 1000}// Your can change ENTIRE List, even to left only 1 type of ships!
 DurationOfExpedition = 1 // 1 for one hour, 2 for two hours... set this value from 1, to the number you want
 
 //-------
@@ -34,7 +34,7 @@ for celestial in GetCachedCelestials() {
     if slt == len(shipsList) {
         if master == 0 || flts < master {
             master = flts
-            origin = celestial // Your Planet(or Moon) with highest amount of ships from the list of ships
+            origin = celestial
         }
     }
 }
