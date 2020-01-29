@@ -73,8 +73,8 @@ func doWork() {
         auc, err = GetAuction()
         if err != nil {
             LogDebug(err)
-        	Sleep(Random(5, 10) * 1000)
-        	continue
+            customSleep(Random(5, 10))
+            continue
         }
 
         ress = auc.MinimumBid - auc.AlreadyBid
