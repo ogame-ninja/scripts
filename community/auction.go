@@ -19,7 +19,6 @@
 
 //######################################## SETTINGS START ########################################
 
-ownPlayerID = 123456                //your own player id
 highestBid = 5000000                //what is the maximum bid
 metBid = true                       //should you bid with metal?
 crysBid = false                     //should you bid with crystal?
@@ -29,6 +28,7 @@ bidHome = "M:1:234:5"               //from which planet should be bid?
 //######################################## SETTINGS END ########################################
 
 
+ownPlayerID = GetCachedPlayer().PlayerID
 celt = GetCachedCelestial(bidHome)
 func AucDo(ress){
 	bid = {}
@@ -68,7 +68,6 @@ func customSleep(sleepTime) {
 }
 
 func doWork() {
-
     for {
         auc, err = GetAuction()
         if err != nil {
@@ -76,7 +75,6 @@ func doWork() {
             customSleep(Random(5, 10))
             continue
         }
-
         if auc.HasFinished {
             customSleep(auc.Endtime + 10)
             continue
