@@ -19,6 +19,7 @@
 
 //######################################## SETTINGS START ########################################
 
+ownPlayerID = 123456                //your own player id
 highestBid = 5000000                //what is the maximum bid
 metBid = true                       //should you bid with metal?
 crysBid = false                     //should you bid with crystal?
@@ -29,21 +30,14 @@ bidHome = "M:1:234:5"               //from which planet should be bid?
 
 
 celt = GetCachedCelestial(bidHome)
-bid = {}
 func AucDo(ress){
-
-    if metBid{
-        bid = {
-            celt.GetID() : NewResources(ress, 0, 0)
-        }    
-    }else if crysBid {
-        bid = {
-            celt.GetID() : NewResources(0, ress, 0)
-        }
-    }else {
-        bid = {
-            celt.GetID() : NewResources(0, 0, ress)
-        }
+	bid = {}
+    if metBid {
+        bid = { celt.GetID() : NewResources(ress, 0, 0) }
+    } else if crysBid {
+        bid = { celt.GetID() : NewResources(0, ress, 0) }
+    } else {
+        bid = { celt.GetID() : NewResources(0, 0, ress) }
     }
     return DoAuction(bid)
 }
@@ -68,37 +62,43 @@ func refreshTime(TimeEnd) {
     }
 }
 
+func customSleep(sleepTime) {
+    LogInfo("Wait " + ShortDur(sleepTime))
+    Sleep(sleepTime * 1000)
+}
+
 func doWork() {
 
     for {
         auc, err = GetAuction()
+        if err != nil {
+            LogDebug(err)
+        	Sleep(Random(5, 10) * 1000)
+        	continue
+        }
 
         ress = auc.MinimumBid - auc.AlreadyBid
-        if !auc.HasFinished {
-            if auc.HighestBidderUserID != 164711 {
-                if auc.MinimumBid <= highestBid {
-                    LogInfo("You are not the highest bidder! Bid " + Dotify(ress) + " resources!")
-                    doAuc = AucDo(ress)
-                    sleepTime = refreshTime(auc.Endtime)
-                    LogDebug("Wait " + ShortDur(sleepTime))
-                    Sleep(sleepTime * 1000)
-                }else {
-                    LogInfo("Resources exceeded! Wait until the next auction!")
-                    sleepTime = auc.Endtime + 10
-                    LogDebug("Wait " + ShortDur(sleepTime))
-                    Sleep(sleepTime * 1000)
-                }
-            }else {
-                LogInfo("You are the highest bidder!")
-                sleepTime = refreshTime(auc.Endtime)
-                LogInfo("Wait " + ShortDur(sleepTime))
-                Sleep(sleepTime * 1000)
-            }
-        }else {
-            sleepTime = auc.Endtime + 10
-            LogInfo("Wait " + ShortDur(sleepTime))
-            Sleep(sleepTime * 1000)
+        if auc.HasFinished {
+            customSleep(auc.Endtime + 10)
+            continue
         }
+        if auc.HighestBidderUserID == ownPlayerID {
+            LogInfo("You are the highest bidder!")
+            customSleep(refreshTime(auc.Endtime))
+            continue
+        }
+        if auc.MinimumBid > highestBid {
+            LogInfo("Resources exceeded! Wait until the next auction!")
+            customSleep(auc.Endtime + 10)
+            continue
+        }
+
+        LogInfo("You are not the highest bidder! Bid " + Dotify(ress) + " resources!")
+        err = AucDo(ress)
+        if err != nil {
+            LogDebug(err)
+        }
+        customSleep(refreshTime(auc.Endtime))
     }
 }
 doWork()
