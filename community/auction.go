@@ -77,7 +77,6 @@ func doWork() {
             continue
         }
 
-        ress = auc.MinimumBid - auc.AlreadyBid
         if auc.HasFinished {
             customSleep(auc.Endtime + 10)
             continue
@@ -93,6 +92,7 @@ func doWork() {
             continue
         }
 
+        ress = auc.MinimumBid - auc.AlreadyBid
         LogInfo("You are not the highest bidder! Bid " + Dotify(ress) + " resources!")
         err = AucDo(ress)
         if err != nil {
