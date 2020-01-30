@@ -84,7 +84,11 @@ func doWork() {
             continue
         }
         if auc.HasFinished {
-            LogInfo("Auction has finished")
+            if auc.Endtime > 7200 {
+                LogInfo("There is currently no auction")
+            } else {
+                LogInfo("Auction has finished")
+            }
             customSleep(auc.Endtime + 10)
             continue
         }
