@@ -79,6 +79,12 @@ func customSleep(sleepTime) {
     Sleep(sleepTime * 1000)
 }
 
+func didWon(auc) {
+    if auc.HighestBidderUserID == ownPlayerID {
+        LogInfo("You won the auction with " + Dotify(auc.CurrentBid) + " resources!")
+    }
+}
+
 func processAuction() {
     auc, err = GetAuction()
     if err != nil {
@@ -91,6 +97,7 @@ func processAuction() {
         } else {
             LogInfo("Auction has finished")
         }
+        didWon(auc)
         return auc.Endtime + 10
     }
     if auc.HighestBidderUserID == ownPlayerID {
