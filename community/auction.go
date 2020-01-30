@@ -30,6 +30,10 @@ bidHome = "M:1:234:5"               //from which planet should be bid?
 
 ownPlayerID = GetCachedPlayer().PlayerID
 celt = GetCachedCelestial(bidHome)
+if celt == nil {
+    LogError(bidHome + " is not one of your planet/moon")
+    return
+}
 
 func AucDo(ress) {
     bid = {}
