@@ -1,4 +1,4 @@
-/* Created by Bull
+/* Created by Bull and Notriv
  * It is not perfect. However, a quick start for many
  */
  
