@@ -30,8 +30,9 @@ bidHome = "M:1:234:5"               //from which planet should be bid?
 
 ownPlayerID = GetCachedPlayer().PlayerID
 celt = GetCachedCelestial(bidHome)
-func AucDo(ress){
-	bid = {}
+
+func AucDo(ress) {
+    bid = {}
     if metBid {
         bid = { celt.GetID() : NewResources(ress, 0, 0) }
     } else if crysBid {
