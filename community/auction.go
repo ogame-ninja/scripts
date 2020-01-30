@@ -67,6 +67,9 @@ func refreshTime(TimeEnd) {
 }
 
 func customSleep(sleepTime) {
+    if sleepTime <= 0 {
+        sleepTime = Random(5, 10)
+    }
     LogInfo("Wait " + ShortDur(sleepTime))
     Sleep(sleepTime * 1000)
 }
@@ -75,12 +78,11 @@ func doWork() {
     for {
         auc, err = GetAuction()
         if err != nil {
-            LogDebug(err)
+            LogError(err)
             customSleep(Random(5, 10))
             continue
         }
         if auc.HasFinished {
-            LogInfo("Auction has finished")
             customSleep(auc.Endtime + 10)
             continue
         }
@@ -99,7 +101,7 @@ func doWork() {
         LogInfo("You are not the highest bidder! Bid " + Dotify(ress) + " resources!")
         err = AucDo(ress)
         if err != nil {
-            LogDebug(err)
+            LogError(err)
         }
         customSleep(refreshTime(auc.Endtime))
     }
