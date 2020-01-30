@@ -59,6 +59,10 @@ func refreshTime(TimeEnd) {
         case TimeEnd <= 3600:                   //60 min
         LogDebug("Only 60 Min")                        
         return Random(300, 600)
+
+        default:
+        LogError("Unknown TimeEnd value", TimeEnd)
+        return Random(5, 10)
     }
 }
 
@@ -76,6 +80,7 @@ func doWork() {
             continue
         }
         if auc.HasFinished {
+            LogInfo("Auction has finished")
             customSleep(auc.Endtime + 10)
             continue
         }
