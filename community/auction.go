@@ -83,6 +83,7 @@ func doWork() {
             continue
         }
         if auc.HasFinished {
+            LogInfo("Auction has finished")
             customSleep(auc.Endtime + 10)
             continue
         }
