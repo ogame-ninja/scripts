@@ -79,41 +79,43 @@ func customSleep(sleepTime) {
     Sleep(sleepTime * 1000)
 }
 
-func doWork() {
-    for {
-        auc, err = GetAuction()
-        if err != nil {
-            LogError(err)
-            customSleep(Random(5, 10))
-            continue
+func processAuction() {
+    auc, err = GetAuction()
+    if err != nil {
+        LogError(err)
+        return Random(5, 10)
+    }
+    if auc.HasFinished {
+        if auc.Endtime > 7200 {
+            LogInfo("There is currently no auction")
+        } else {
+            LogInfo("Auction has finished")
         }
-        if auc.HasFinished {
-            if auc.Endtime > 7200 {
-                LogInfo("There is currently no auction")
-            } else {
-                LogInfo("Auction has finished")
-            }
-            customSleep(auc.Endtime + 10)
-            continue
-        }
-        if auc.HighestBidderUserID == ownPlayerID {
-            LogInfo("You are the highest bidder!")
-            customSleep(refreshTime(auc.Endtime))
-            continue
-        }
-        if auc.MinimumBid > highestBid {
-            LogInfo("Resources exceeded! Wait until the next auction!")
-            customSleep(auc.Endtime + 10)
-            continue
-        }
+        return auc.Endtime + 10
+    }
+    if auc.HighestBidderUserID == ownPlayerID {
+        LogInfo("You are the highest bidder!")
+        return refreshTime(auc.Endtime)
+    }
+    if auc.MinimumBid > highestBid {
+        LogInfo("Resources exceeded! Wait until the next auction!")
+        return auc.Endtime + 10
+    }
 
-        ress = auc.MinimumBid - auc.AlreadyBid
-        LogInfo("You are not the highest bidder! Bid " + Dotify(ress) + " resources!")
-        err = AucDo(ress)
-        if err != nil {
-            LogError(err)
-        }
-        customSleep(refreshTime(auc.Endtime))
+    ress = auc.MinimumBid - auc.AlreadyBid
+    LogInfo("You are not the highest bidder! Bid " + Dotify(ress) + " resources!")
+    err = AucDo(ress)
+    if err != nil {
+        LogError(err)
+        return Random(5, 10)
+    }
+    return refreshTime(auc.Endtime)
+}
+
+func doWork() {
+    for { // forever process auctions
+        sleepTime = processAuction()
+        customSleep(sleepTime)
     }
 }
 doWork()
