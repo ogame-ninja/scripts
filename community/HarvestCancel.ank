@@ -1,0 +1,23 @@
+checkInterval = 1 // Check every minute
+
+for {
+    fleets, slots = GetFleets()
+    
+    for fleet in fleets {
+        if fleet.Mission == RECYCLEDEBRISFIELD && fleet.ReturnFlight == false {
+            systemInfo, _ = GalaxyInfos(fleet.Destination.Galaxy, fleet.Destination.System)
+            planetInfo = systemInfo.Position(fleet.Destination.Position)
+            if planetInfo == nil {
+                LogError("Planet not found")
+            } else if planetInfo.Debris.RecyclersNeeded == 0 {
+                hour, min, sec = Clock()
+                LogInfo("Debris field at " + fleet.Destination + " has gone at " + hour + "h" + min + "m" + sec + ". Fleet canceled.")
+                CancelFleet(fleet.ID)
+            } else {
+                LogDebug("Debris field at " + fleet.Destination + " is OK")
+            }
+        }
+    }
+
+    Sleep(checkInterval * 60 * 1000)
+}
