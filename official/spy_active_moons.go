@@ -24,7 +24,7 @@ func shouldSkip(planetInfo) {
         }
     }
     
-    return planetInfo.Inactive || planetInfo.Vacation || (planetInfo.Alliance && planetInfo.Alliance.Name == myAlliance)
+    return planetInfo.Inactive || planetInfo.Vacation || (planetInfo.Alliance != nil && planetInfo.Alliance.Name == myAlliance)
 }
 
 // Sends spy probes to a coordinate
@@ -54,7 +54,6 @@ for system = spyFromSystem; system <= spyToSystem; system++ {
     for i = 1; i <= 15; i++ {
         planetInfo = systemInfos.Position(i)
         if !shouldSkip(planetInfo) && planetInfo.Moon != nil {
-            Print(planetInfo)
             pCoord = planetInfo.Coordinate
             mCoord = NewCoordinate(pCoord.Galaxy, pCoord.System, pCoord.Position, MOON_TYPE)
             spyCoord(mCoord)
