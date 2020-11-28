@@ -1,0 +1,1014 @@
+// ### Creator : djkristoph ### /// 
+// Auto build all in game //
+// if you put LIGHTFIGHTER: 100 this script build 100 LIGHTFIGHTER //
+// if someone reason LIGHTFIGHTER destroy like 20, script build 20 new // 
+
+sort = import("sort")
+planetsToBuildOn = GetPlanets()
+
+blocked = ["2:477:5","2:477:13","2:477:9","2:477:14","2:476:9"] //skip this planets
+
+statki = {
+    LIGHTFIGHTER:1000,
+	HEAVYFIGHTER:500,
+	CRUISER:0,
+	BATTLESHIP:0,
+	BATTLECRUISER:0,
+	BOMBER:0,
+	DESTROYER:0,
+	DEATHSTAR:0,
+	REAPER:0,
+	PATHFINDER:0,
+	
+	SMALLCARGO:2000,
+	LARGECARGO:100,
+	COLONYSHIP:1,
+	RECYCLER:10,
+	ESPIONAGEPROBE:80,
+	SOLARSATELLITE:400,
+	CRAWLER:200,
+}
+
+technologie = {
+    ESPIONAGETECHNOLOGY:10,
+    COMPUTERTECHNOLOGY:0,
+    WEAPONSTECHNOLOGY:10,
+    SHIELDINGTECHNOLOGY:10,
+    ARMOURTECHNOLOGY:10,
+    ENERGYTECHNOLOGY:12,
+    HYPERSPACETECHNOLOGY:0,
+    COMBUSTIONDRIVE:0,
+    IMPULSEDRIVE:6,
+    HYPERSPACEDRIVE:0,
+    LASERTECHNOLOGY:10,
+    IONTECHNOLOGY:5,
+    PLASMATECHNOLOGY:5,
+    INTERGALACTICRESEARCHNETWORK:0,
+    ASTROPHYSICS:10,
+    GRAVITONTECHNOLOGY:0,
+}
+
+obrona = {
+    ROCKETLAUNCHER:1500,
+    LIGHTLASER:1000,
+    HEAVYLASER:0,
+    GAUSSCANNON:0,
+    IONCANNON:0,
+    PLASMATURRET:0,
+    SMALLSHIELDDOME:1,
+    LARGESHIELDDOME:0,
+    ANTIBALLISTICMISSILES:0,
+    INTERPLANETARYMISSILES:10,
+}
+
+budynki = {
+    METALMINE:30,
+    CRYSTALMINE:30,
+    DEUTERIUMSYNTHESIZER:30,
+    SOLARPLANT:20,
+    FUSIONREACTOR:0,
+    SOLARSATELLITE:0,
+    METALSTORAGE:0,
+    CRYSTALSTORAGE:0,
+    DEUTERIUMTANK:0,
+    SHIELDEDMETALDEN:0,
+    UNDERGROUNDCRYSTALDEN:0,
+    SEABEDDEUTERIUMDEN:0,
+    ALLIANCEDEPOT:0,
+    ROBOTICSFACTORY:0,
+    SHIPYARD:10,
+    RESEARCHLAB:0,
+    MISSILESILO:8,
+    NANITEFACTORY:3,
+    TERRAFORMER:0,
+    SPACEDOCK:0,
+    LUNARBASE:0,
+    SENSORPHALANX:0,
+    JUMPGATE:0,
+}
+
+//not change!!//
+//not change!!//
+//not change!!//
+//not change!!//
+//not change!!//
+//not change!!//
+
+
+
+//checkfleet
+fleet, slots = GetFleets()
+for f in fleet {
+    if (f.Ships.Destroyer > 0){
+        statki[DESTROYER] = statki[DESTROYER] - f.Ships.Destroyer
+    }
+    if (f.Ships.Bomber > 0){
+        statki[BOMBER] = statki[BOMBER] - f.Ships.Bomber
+    }
+    if (f.Ships.Cruiser > 0){
+        statki[CRUISER] = statki[CRUISER] - f.Ships.Cruiser
+    }
+    if (f.Ships.Reaper > 0){
+        statki[REAPER] = statki[REAPER] - f.Ships.Reaper
+    }
+    if (f.Ships.LightFighter > 0){
+        statki[LIGHTFIGHTER] = statki[LIGHTFIGHTER] - f.Ships.LightFighter
+    }
+    if (f.Ships.HeavyFighter > 0){
+        statki[HEAVYFIGHTER] = statki[HEAVYFIGHTER] - f.Ships.HeavyFighter
+    }
+    if (f.Ships.Pathfinder > 0){
+        statki[PATHFINDER] = statki[PATHFINDER] - f.Ships.Pathfinder
+    }
+    if (f.Ships.Deathstar > 0){
+        statki[DEATHSTAR] = statki[DEATHSTAR] - f.Ships.Deathstar
+    }
+    if (f.Ships.SmallCargo > 0){
+        statki[SMALLCARGO] = statki[SMALLCARGO] - f.Ships.SmallCargo
+    }
+    if (f.Ships.LargeCargo > 0){
+        statki[LARGECARGO] = statki[LARGECARGO] - f.Ships.LargeCargo
+    }
+    if (f.Ships.ColonyShip > 0){
+        statki[COLONYSHIP] = statki[COLONYSHIP] - f.Ships.ColonyShip
+    }
+    if (f.Ships.SolarSatellite > 0){
+        statki[SOLARSATELLITE] = statki[SOLARSATELLITE] - f.Ships.SolarSatellite
+    }
+    if (f.Ships.EspionageProbe > 0){
+        statki[ESPIONAGEPROBE] = statki[ESPIONAGEPROBE] - f.Ships.EspionageProbe
+    }
+    if (f.Ships.Recycler > 0){
+        statki[RECYCLER] = statki[RECYCLER] - f.Ships.Recycler
+    }
+    if (f.Ships.Battleship > 0){
+        statki[BATTLESHIP] = statki[BATTLESHIP] - f.Ships.Battleship
+    }
+    if (f.Ships.Crawler > 0){
+        statki[CRAWLER] = statki[CRAWLER] - f.Ships.Crawler
+    }
+    if (f.Ships.Battlecruiser > 0){
+        statki[BATTLECRUISER] = statki[BATTLECRUISER] - f.Ships.Battlecruiser
+    }
+}
+arrstatki = []
+for k, v in statki {
+    arrstatki += [[k, v]]
+}
+sort.Slice(arrstatki, func(i, j) { return arrstatki[i][1] < arrstatki[j][1] })
+arrobrona = []
+for k, v in obrona {
+    arrobrona += [[k, v]]
+}
+sort.Slice(arrobrona, func(i, j) { return arrobrona[i][1] < arrobrona[j][1] })
+arrtechnologie = []
+for k, v in technologie {
+    arrtechnologie += [[k, v]]
+}
+sort.Slice(arrtechnologie, func(i, j) { return arrtechnologie[i][1] < arrtechnologie[j][1] })
+arrbudynki = []
+for k, v in budynki {
+    arrbudynki += [[k, v]]
+}
+sort.Slice(arrbudynki, func(i, j) { return arrbudynki[i][1] < arrbudynki[j][1] })
+
+
+func millisecondsToTime(milliseconds) {
+    seconds = (milliseconds / 1000) % 60 ;
+    minutes = ((milliseconds / (1000*60)) % 60);
+    hours   = ((milliseconds / (1000*60*60)) % 24);
+    
+    endtime = 0
+    if (hours > 0){
+        endtime = hours + "h:" + minutes + "m:" + seconds + "s"
+    }else{
+        endtime = minutes + "m:" + seconds + "s"
+    }
+   
+    return endtime;
+}
+
+sleepglobal = 999999999
+
+for {
+    for planet in planetsToBuildOn {
+        
+        planetCelestial, _ = GetCelestial(planet.Coordinate)
+        allShips, _ = planetCelestial.GetShips()
+        defence, _ = planetCelestial.GetDefense()
+        researches = GetResearch()
+        buildings, err = planetCelestial.GetResourcesBuildings()
+        facilities = planetCelestial.GetFacilities()
+        
+        cancheck = true
+        for omijac in blocked{
+            celestial2 = GetCachedCelestial(omijac)
+            if (celestial2.Coordinate == planet.Coordinate){
+              cancheck = false
+            }
+        }
+        if (!cancheck){
+            continue
+        }
+        
+        for unitID in arrobrona {
+            
+            nbrToBuild = unitID[1]
+            unitID = unitID[0]
+            
+            productionLine, liczba, _ = GetProduction(planetCelestial.GetID())
+            nazwa = ID2Str(unitID);
+            
+            if (nazwa == "PlasmaTurret" && nbrToBuild > 0 && defence.PlasmaTurret < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - defence.PlasmaTurret;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    BuildDefense(planetCelestial.GetID(),unitID, canBuild)
+                }
+            }
+            
+            if (nazwa == "InterplanetaryMissiles" && nbrToBuild > 0 && defence.InterplanetaryMissiles < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID,1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - defence.InterplanetaryMissiles;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    BuildDefense(planetCelestial.GetID(),unitID, canBuild)
+                }
+                
+            }
+            
+            if (nazwa == "LightLaser" && nbrToBuild > 0 && defence.LightLaser < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - defence.LightLaser;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    BuildDefense(planetCelestial.GetID(),unitID, canBuild)
+                }
+            }
+            
+            if (nazwa == "GaussCannon" && nbrToBuild > 0 && defence.GaussCannon < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - defence.GaussCannon;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    BuildDefense(planetCelestial.GetID(),unitID, canBuild)
+                }
+            }
+            
+            if (nazwa == "SmallShieldDome" && nbrToBuild > 0 && defence.SmallShieldDome < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - defence.SmallShieldDome;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    BuildDefense(planetCelestial.GetID(),unitID, canBuild)
+                }
+            }
+            
+            if (nazwa == "IonCannon" && nbrToBuild > 0 && defence.IonCannon < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - defence.IonCannon;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    BuildDefense(planetCelestial.GetID(),unitID, canBuild)
+                }
+            }
+            
+            if (nazwa == "RocketLauncher" && nbrToBuild > 0 && defence.RocketLauncher < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - defence.RocketLauncher;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    BuildDefense(planetCelestial.GetID(),unitID, canBuild)
+                }
+            }
+            
+            if (nazwa == "HeavyLaser" && nbrToBuild > 0 && defence.HeavyLaser < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - defence.HeavyLaser;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    BuildDefense(planetCelestial.GetID(),unitID, canBuild)
+                }
+            }
+            
+            if (nazwa == "AntiBallisticMissiles" && nbrToBuild > 0 && defence.AntiBallisticMissiles < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - defence.AntiBallisticMissiles;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    BuildDefense(planetCelestial.GetID(),unitID, canBuild)
+                }
+            }
+            
+            if (nazwa == "LargeShieldDome" && nbrToBuild > 0 && defence.LargeShieldDome < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - defence.LargeShieldDome;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    BuildDefense(planetCelestial.GetID(),unitID, canBuild)
+                }
+            }
+        
+        }
+        Print("All defence checked")
+        
+        for unitID in arrtechnologie {
+            
+            nbrToBuild = unitID[1]
+            unitID = unitID[0]
+            
+            buildingID, buildingCountdown, researchID, researchCountdown = ConstructionsBeingBuilt(planetCelestial.GetID())
+            nazwa = ID2Str(unitID)
+            
+            if (nazwa == "IonTechnology" && nbrToBuild > 0 && researches.IonTechnology < nbrToBuild && researchCountdown == 0){
+                unitPrice = GetPrice(unitID, researches.IonTechnology + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building Technology: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildTechnology(planetCelestial.GetID(),unitID)
+                }
+            }
+            
+            if (nazwa == "PlasmaTechnology" && nbrToBuild > 0 && researches.PlasmaTechnology < nbrToBuild && researchCountdown == 0){
+                unitPrice = GetPrice(unitID, researches.PlasmaTechnology + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building Technology: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildTechnology(planetCelestial.GetID(),unitID)
+                }
+            }
+            
+            if (nazwa == "Astrophysics" && nbrToBuild > 0 && researches.Astrophysics < nbrToBuild && researchCountdown == 0){
+                unitPrice = GetPrice(unitID, researches.Astrophysics + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                print(unitPrice)
+                if canBuild > 0 {
+                   Print("Building Technology: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildTechnology(planetCelestial.GetID(),unitID)
+                }
+            }
+            
+            if (nazwa == "CombustionDrive" && nbrToBuild > 0 && researches.CombustionDrive < nbrToBuild && researchCountdown == 0){
+                unitPrice = GetPrice(unitID, researches.CombustionDrive + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building Technology: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildTechnology(planetCelestial.GetID(),unitID)
+                }
+            }
+            
+            if (nazwa == "LaserTechnology" && nbrToBuild > 0 && researches.LaserTechnology < nbrToBuild && researchCountdown == 0){
+                unitPrice = GetPrice(unitID, researches.LaserTechnology + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building Technology: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildTechnology(planetCelestial.GetID(),unitID)
+                }
+            }
+            
+            if (nazwa == "ComputerTechnology" && nbrToBuild > 0 && researches.ComputerTechnology < nbrToBuild && researchCountdown == 0){
+                unitPrice = GetPrice(unitID, researches.ComputerTechnology + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building Technology: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildTechnology(planetCelestial.GetID(),unitID)
+                }
+            }
+            
+            if (nazwa == "EnergyTechnology" && nbrToBuild > 0 && researches.EnergyTechnology < nbrToBuild && researchCountdown == 0){
+                unitPrice = GetPrice(unitID, researches.EnergyTechnology + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building Technology: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildTechnology(planetCelestial.GetID(),unitID)
+                }
+            }
+            
+            if (nazwa == "HyperspaceTechnology" && nbrToBuild > 0 && researches.HyperspaceTechnology < nbrToBuild && researchCountdown == 0){
+                unitPrice = GetPrice(unitID, researches.HyperspaceTechnology + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building Technology: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildTechnology(planetCelestial.GetID(),unitID)
+                }
+            }
+            
+            if (nazwa == "EspionageTechnology" && nbrToBuild > 0 && researches.EspionageTechnology < nbrToBuild && researchCountdown == 0){
+                unitPrice = GetPrice(unitID, researches.EspionageTechnology + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building Technology: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildTechnology(planetCelestial.GetID(),unitID)
+                }
+            }
+            
+            if (nazwa == "HyperspaceDrive" && nbrToBuild > 0 && researches.HyperspaceDrive < nbrToBuild && researchCountdown == 0){
+                unitPrice = GetPrice(unitID, researches.HyperspaceDrive + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building Technology: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildTechnology(planetCelestial.GetID(),unitID)
+                }
+            }
+            
+            if (nazwa == "ShieldingTechnology" && nbrToBuild > 0 && researches.ShieldingTechnology < nbrToBuild && researchCountdown == 0){
+                unitPrice = GetPrice(unitID, researches.ShieldingTechnology + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building Technology: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildTechnology(planetCelestial.GetID(),unitID)
+                }
+            }
+            
+            if (nazwa == "GravitonTechnology" && nbrToBuild > 0 && researches.GravitonTechnology < nbrToBuild && researchCountdown == 0){
+                unitPrice = GetPrice(unitID, researches.GravitonTechnology + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building Technology: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildTechnology(planetCelestial.GetID(),unitID)
+                }
+            }
+            
+            if (nazwa == "ImpulseDrive" && nbrToBuild > 0 && researches.ImpulseDrive < nbrToBuild && researchCountdown == 0){
+                unitPrice = GetPrice(unitID, researches.ImpulseDrive + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building Technology: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildTechnology(planetCelestial.GetID(),unitID)
+                }
+            }
+            
+            if (nazwa == "ArmourTechnology" && nbrToBuild > 0 && researches.ArmourTechnology < nbrToBuild && researchCountdown == 0){
+                unitPrice = GetPrice(unitID, researches.ArmourTechnology + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building Technology: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildTechnology(planetCelestial.GetID(),unitID)
+                }
+            }
+            
+            if (nazwa == "WeaponsTechnology" && nbrToBuild > 0 && researches.WeaponsTechnology < nbrToBuild && researchCountdown == 0){
+                unitPrice = GetPrice(unitID, researches.WeaponsTechnology + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building Technology: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildTechnology(planetCelestial.GetID(),unitID)
+                }
+            }
+            
+            if (nazwa == "IntergalacticResearchNetwork" && nbrToBuild > 0 && researches.IntergalacticResearchNetwork < nbrToBuild && researchCountdown == 0){
+                unitPrice = GetPrice(unitID, researches.IntergalacticResearchNetwork + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building Technology: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildTechnology(planetCelestial.GetID(),unitID)
+                }
+            }
+        }
+        Print("All technologies checked")
+        
+        for unitID in arrstatki {
+            
+            nbrToBuild = unitID[1]
+            unitID = unitID[0]
+            
+            productionLine, liczba, _ = GetProduction(planetCelestial.GetID())
+            
+            if (ID2Str(unitID) == "Destroyer" && nbrToBuild > 0 && allShips.Destroyer < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - allShips.Destroyer;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    Build(planetCelestial.GetID(), unitID, canBuild)
+                }
+                
+            }
+            
+            if (ID2Str(unitID) == "Bomber" && nbrToBuild > 0 && allShips.Bomber < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - allShips.Bomber;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    Build(planetCelestial.GetID(), unitID, canBuild)
+                }
+            }
+            
+            if (ID2Str(unitID) == "EspionageProbe" && nbrToBuild > 0 && allShips.EspionageProbe < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - allShips.EspionageProbe;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    Build(planetCelestial.GetID(), unitID, canBuild)
+                }
+            }
+            
+            if (ID2Str(unitID) == "SmallCargo" && nbrToBuild > 0 && allShips.SmallCargo < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - allShips.SmallCargo;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    Build(planetCelestial.GetID(), unitID, canBuild)
+                }
+            }
+            
+            if (ID2Str(unitID) == "LightFighter" && nbrToBuild > 0 && allShips.LightFighter < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - allShips.LightFighter;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    Build(planetCelestial.GetID(), unitID, canBuild)
+                }
+            }
+            
+            if (ID2Str(unitID) == "Battlecruiser" && nbrToBuild > 0 && allShips.Battlecruiser < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - allShips.Battlecruiser;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    Build(planetCelestial.GetID(), unitID, canBuild)
+                }
+            }
+            
+            if (ID2Str(unitID) == "Battleship" && nbrToBuild > 0 && allShips.Battleship < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - allShips.Battleship;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    Build(planetCelestial.GetID(), unitID, canBuild)
+                }
+            }
+            
+            if (ID2Str(unitID) == "Crawler" && nbrToBuild > 0 && allShips.Crawler < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - allShips.Crawler;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    Build(planetCelestial.GetID(), unitID, canBuild)
+                }
+            }
+            
+            if (ID2Str(unitID) == "Reaper" && nbrToBuild > 0 && allShips.Reaper < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - allShips.Reaper;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    Build(planetCelestial.GetID(), unitID, canBuild)
+                }
+            }
+            
+            if (ID2Str(unitID) == "Deathstar" && nbrToBuild > 0 && allShips.Deathstar < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - allShips.Deathstar;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    Build(planetCelestial.GetID(), unitID, canBuild)
+                }
+            }
+            
+            if (ID2Str(unitID) == "Recycler" && nbrToBuild > 0 && allShips.Recycler < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - allShips.Recycler;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    Build(planetCelestial.GetID(), unitID, canBuild)
+                }
+            }
+            
+            if (ID2Str(unitID) == "SolarSatellite" && nbrToBuild > 0 && allShips.SolarSatellite < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - allShips.SolarSatellite;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    Build(planetCelestial.GetID(), unitID, canBuild)
+                }
+            }
+            
+            if (ID2Str(unitID) == "HeavyFighter" && nbrToBuild > 0 && allShips.HeavyFighter < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - allShips.HeavyFighter;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    Build(planetCelestial.GetID(), unitID, canBuild)
+                }
+            }
+            
+            if (ID2Str(unitID) == "Pathfinder" && nbrToBuild > 0 && allShips.Pathfinder < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - allShips.Pathfinder;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    Build(planetCelestial.GetID(), unitID, canBuild)
+                }
+            }
+            
+            if (ID2Str(unitID) == "LargeCargo" && nbrToBuild > 0 && allShips.LargeCargo < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - allShips.LargeCargo;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    Build(planetCelestial.GetID(), unitID, canBuild)
+                }
+            }
+            
+            if (ID2Str(unitID) == "ColonyShip" && nbrToBuild > 0 && allShips.ColonyShip < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - allShips.ColonyShip;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    Build(planetCelestial.GetID(), unitID, canBuild)
+                }
+            }
+            
+            if (ID2Str(unitID) == "Cruiser" && nbrToBuild > 0 && allShips.Cruiser < nbrToBuild && liczba == 0){
+                unitPrice = GetPrice(unitID, 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                nbrToBuild = nbrToBuild - allShips.Cruiser;
+                if canBuild > 0 {
+                    if canBuild > nbrToBuild {
+                        canBuild = nbrToBuild
+                    }
+                    Print("Building: "+canBuild+"/"+nbrToBuild+" "+ID2Str(unitID)+" on "+planet.Name)
+                    Build(planetCelestial.GetID(), unitID, canBuild)
+                }
+            }
+        
+        }
+        Print("All ships checked")
+        
+        for unitID in arrbudynki {
+            nbrToBuild = unitID[1]
+            unitID = unitID[0]
+            buildingID, buildingCountdown, researchID, researchCountdown = ConstructionsBeingBuilt(planetCelestial.GetID())
+            nazwa = ID2Str(unitID)
+
+            if (nazwa == "MetalMine" && nbrToBuild > 0 && buildings.MetalMine < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, buildings.MetalMine + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildBuilding(planetCelestial.GetID(), unitID)
+                }
+            }
+            if (nazwa == "CrystalMine" && nbrToBuild > 0 && buildings.CrystalMine < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, buildings.CrystalMine + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildBuilding(planetCelestial.GetID(), unitID)
+                }
+            }
+            if (nazwa == "DeuteriumSynthesizer" && nbrToBuild > 0 && buildings.DeuteriumSynthesizer < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, buildings.DeuteriumSynthesizer + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildBuilding(planetCelestial.GetID(), unitID)
+                }
+            }
+            if (nazwa == "SolarPlant" && nbrToBuild > 0 && buildings.SolarPlant < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, buildings.SolarPlant + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildBuilding(planetCelestial.GetID(), unitID)
+                }
+            }
+            if (nazwa == "FusionReactor" && nbrToBuild > 0 && buildings.FusionReactor < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, buildings.FusionReactor + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildBuilding(planetCelestial.GetID(), unitID)
+                }
+            }
+            if (nazwa == "SolarSatellite" && nbrToBuild > 0 && buildings.SolarSatellite < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, buildings.SolarSatellite + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildBuilding(planetCelestial.GetID(), unitID)
+                }
+            }
+            if (nazwa == "MetalStorage" && nbrToBuild > 0 && buildings.MetalStorage < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, buildings.MetalStorage + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildBuilding(planetCelestial.GetID(), unitID)
+                }
+            }
+            if (nazwa == "CrystalStorage" && nbrToBuild > 0 && buildings.CrystalStorage < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, buildings.CrystalStorage + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildBuilding(planetCelestial.GetID(), unitID)
+                }
+            }
+            if (nazwa == "DeuteriumTank" && nbrToBuild > 0 && buildings.DeuteriumTank < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, buildings.DeuteriumTank + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   BuildBuilding(planetCelestial.GetID(), unitID)
+                }
+            }
+  
+        }
+        Print("All buildings checked")
+        
+        for unitID in arrbudynki {
+            nbrToBuild = unitID[1]
+            unitID = unitID[0]
+            buildingID, buildingCountdown, researchID, researchCountdown = ConstructionsBeingBuilt(planetCelestial.GetID())
+            nazwa = ID2Str(unitID)
+            
+            // 19:31:19 DEBUG [UndergroundCrystalDen]
+            // 19:31:22 DEBUG [ShieldedMetalDen]
+            // 19:31:26 DEBUG [SeabedDeuteriumDen]
+
+            if (nazwa == "RoboticsFactory" && nbrToBuild > 0 && facilities[0].RoboticsFactory < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, facilities[0].RoboticsFactory + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   Build(planetCelestial.GetID(), unitID,1)
+                }
+            }
+            if (nazwa == "Shipyard" && nbrToBuild > 0 && facilities[0].Shipyard < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, facilities[0].Shipyard + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   Build(planetCelestial.GetID(), unitID,1)
+                }
+            }
+            if (nazwa == "ResearchLab" && nbrToBuild > 0 && facilities[0].ResearchLab < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, facilities[0].ResearchLab + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   Build(planetCelestial.GetID(), unitID,1)
+                }
+            }
+            if (nazwa == "SensorPhalanx" && nbrToBuild > 0 && facilities[0].SensorPhalanx < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, facilities[0].SensorPhalanx + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   Build(planetCelestial.GetID(), unitID,1)
+                }
+            }
+            if (nazwa == "JumpGate" && nbrToBuild > 0 && facilities[0].JumpGate < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, facilities[0].JumpGate + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   Build(planetCelestial.GetID(), unitID,1)
+                }
+            }
+            if (nazwa == "LunarBase" && nbrToBuild > 0 && facilities[0].LunarBase < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, facilities[0].LunarBase + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   Build(planetCelestial.GetID(), unitID,1)
+                }
+            }
+            if (nazwa == "SpaceDock" && nbrToBuild > 0 && facilities[0].SpaceDock < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, facilities[0].SpaceDock + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   Build(planetCelestial.GetID(), unitID,1)
+                }
+            }
+            if (nazwa == "Terraformer" && nbrToBuild > 0 && facilities[0].Terraformer < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, facilities[0].Terraformer + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   Build(planetCelestial.GetID(), unitID,1)
+                }
+            }
+            if (nazwa == "AllianceDepot" && nbrToBuild > 0 && facilities[0].AllianceDepot < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, facilities[0].AllianceDepot + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   Build(planetCelestial.GetID(), unitID,1)
+                }
+            }
+            if (nazwa == "MissileSilo" && nbrToBuild > 0 && facilities[0].MissileSilo < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, facilities[0].MissileSilo + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   Build(planetCelestial.GetID(), unitID,1)
+                }
+            }
+            if (nazwa == "NaniteFactory" && nbrToBuild > 0 && facilities[0].NaniteFactory < nbrToBuild && buildingCountdown == 0){
+                unitPrice = GetPrice(unitID, facilities[0].NaniteFactory + 1)
+                resources, _ = planetCelestial.GetResources()
+                canBuild = resources.Div(unitPrice)
+                if canBuild > 0 {
+                   Print("Building: "+ID2Str(unitID)+" on "+planet.Name)
+                   Build(planetCelestial.GetID(), unitID,1)
+                }
+            }
+        }
+        Print("All facilities checked")
+        
+        
+        //timer//
+        buildingID, buildingCountdown, researchID, researchCountdown = ConstructionsBeingBuilt(planetCelestial.GetID())
+        productionLine, liczba, _ = GetProduction(planetCelestial.GetID())
+        
+        if (buildingCountdown * 1000 < sleepglobal && buildingCountdown != 0){
+            sleepglobal = buildingCountdown * 1000
+        }
+        if (researchCountdown * 1000 < sleepglobal && researchCountdown != 0){
+            sleepglobal = researchCountdown * 1000
+        }
+        if (liczba * 1000 < sleepglobal && liczba != 0){
+            sleepglobal = liczba * 1000
+        }
+    }
+    
+    if (sleepglobal < 2 * 60 * 1000){
+        sleepglobal = Random(2 * 60 * 1000,5 * 60 * 1000)
+    }
+    if (sleepglobal == 999999999){
+        sleepglobal = Random(2 * 60 * 1000,5 * 60 * 1000)
+    }
+    
+    Print("Sleep : " + millisecondsToTime(sleepglobal))
+    Sleep(sleepglobal)
+}
