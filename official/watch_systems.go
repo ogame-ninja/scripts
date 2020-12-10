@@ -2,7 +2,6 @@ galaxy = 4
 fromSystem = 1
 toSystem = 3
 interval = Random(5*60*1000, 10*60*1000) // 5-10min
-email = "you@gmail.com"
 
 //-------------------------------
 
@@ -21,7 +20,7 @@ for {
         })
         key = galaxy+":"+system
         if data[key] != nil && data[key] != arr {
-            SendMail("New/Removed planets in "+key, "No body", email)
+            SendTelegram(TELEGRAM_CHAT_ID, "New/Removed planets in "+key)
         }
         data[key] = arr
     }
