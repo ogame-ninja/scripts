@@ -19,6 +19,7 @@ Planets = GetPlanets()
 researches = GetResearch()
 hypertech = researches.HyperspaceTechnology
 largeCargoCap = 0.05*hypertech*25000 + 25000
+factor = largeCargoCap + 12000                  // LC Cargo + cost of one LC
 for {
     for planet in Planets {
         celestial = GetCachedCelestial(planet.Coordinate)
@@ -34,7 +35,7 @@ for {
         //Only build when no ships already being build
         productionLine = GetProduction(planet.ID)[0]
         if(len(productionLine) == 0 && totalRes > totalShipsCapacity){
-            LargeCargosToBuild = Round((totalRes-totalShipsCapacity)/largeCargoCap)
+            LargeCargosToBuild = Round((totalRes-totalShipsCapacity)/factor)
             celestial.Build(LARGECARGO,LargeCargosToBuild)  
             print("Too few capacity to save all the ressources")
             print("Build Large Cargo on planet: "+planet.Coordinate)
