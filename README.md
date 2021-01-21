@@ -15,6 +15,7 @@
 [Build a building and cancel it a minute before it finished](official/build_cancel.go)  
 [Get email when new/abandoned planets in a range of systems.](official/watch_systems.go)  
 [Spy active players moon in a range](official/spy_active_moons.go)  
+[Spy active moons in a range](official/spy_moons_activity.go)  
 [Build a list of ships on a planet](official/ships_builder.go)  
 [Custom repatriate](official/repatriate.go)  
 [Clone master (planet/moon) defenses on slave (planet/moon)](official/clone_defenses.go)  
