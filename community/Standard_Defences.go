@@ -1,6 +1,6 @@
 // set those variable as you wish
-homeworld = GetCachedCelestial("M:3:249:8") //this will be the main colony/moon to send transports
-standardrocket = 31000 //rocketlaucher you want the script to build
+homeworld = GetCachedCelestial("M:1:2:3") //this will be the main colony/moon to send transports
+standardrocket = 10000 //rocketlaucher you want the script to build
 standardllaser = 2500 //light laser you want the script to build
 standardhlaser = 1000 //heavy laser you want the script to build
 standardgauss = 200 //gauss cannon you want the script to build
@@ -171,6 +171,7 @@ for celestial in GetCachedPlanets() {
         Rmin = Random(50, 100)
         Print(celestial.GetCoordinate(), "sleep", Rmin, " min")
         SleepMin(Rmin)
+        continue
     } (celestial)
 }
 <-OnQuitCh
