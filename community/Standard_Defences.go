@@ -60,7 +60,7 @@ func buildefense(celestial, sumrocket, sumllaser, sumhlaser, sumgauss, sumplasma
         goalllaser = missingllaser
         goalhlaser = missinghlaser
         restosend = price1.Add(price2).Add(price3)
-    } else if res.Gte(price1.Add(price2)) && (missingrocket > 0 || missinglaserini > 0) {
+    } else if res.Gte(price1.Add(price2)) && (missingrocket > 0 || missingllaser > 0) {
         goalrocket = missingrocket
         goalllaser = missingllaser
         restosend = price1.Add(price2)
