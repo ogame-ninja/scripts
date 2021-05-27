@@ -41,7 +41,7 @@ func spyCoord(coord) {
                 Print("Sending probes to", coord)
             break
         } else {
-            Sleep(30 * 1000) // Wait 30s
+            SleepSec(30) // Wait 30s
         }
     }
 }
