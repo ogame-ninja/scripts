@@ -1,5 +1,4 @@
 origin = GetCachedCelestial("1:2:3")           // Celestial from where to spy from
-myAlliance = "TNT"                             // Should skip this alliance
 spyFromSystem = 1                              // Lower limit system to spy
 spyToSystem = 299                              // Upper limit system to spy
 spy2send = 2                                   // Number of spy probes to send
@@ -24,7 +23,7 @@ func shouldSkip(planetInfo) {
         }
     }
     
-    return planetInfo.Inactive || planetInfo.Vacation || (planetInfo.Alliance != nil && planetInfo.Alliance.Name == myAlliance)
+    return planetInfo.Inactive || planetInfo.Vacation
 }
 
 // Sends spy probes to a coordinate
