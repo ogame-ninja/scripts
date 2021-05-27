@@ -54,7 +54,7 @@ for system = spyFromSystem; system <= spyToSystem; system++ {
         planetInfo = systemInfos.Position(i)
         if !shouldSkip(planetInfo) && planetInfo.Moon != nil {
             pCoord = planetInfo.Coordinate
-            mCoord = NewCoordinate(pCoord.Galaxy, pCoord.System, pCoord.Position, MOON_TYPE)
+            mCoord = pCoord.Moon()
             spyCoord(mCoord)
         }
     }
