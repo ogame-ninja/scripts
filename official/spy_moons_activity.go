@@ -32,13 +32,13 @@ func spyCoord(coord) {
     for {
         slots = GetSlots()
         if slots.InUse < slots.Total {
-                fleet = NewFleet()
-                fleet.SetOrigin(origin)
-                fleet.SetDestination(coord)
-                fleet.SetMission(SPY)
-                fleet.AddShips(ESPIONAGEPROBE, spy2send)
-                fleet, err = fleet.SendNow()
-                Print("Sending probes to", coord)
+            fleet = NewFleet()
+            fleet.SetOrigin(origin)
+            fleet.SetDestination(coord)
+            fleet.SetMission(SPY)
+            fleet.AddShips(ESPIONAGEPROBE, spy2send)
+            fleet, err = fleet.SendNow()
+            Print("Sending probes to", coord)
             break
         } else {
             SleepSec(30) // Wait 30s
