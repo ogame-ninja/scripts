@@ -47,7 +47,7 @@ func spyCoord(coord) {
 
 // Foreach systems in the defined range, spy all active moons
 if spyFromSystem < 1 { spyFromSystem = 1 }
-if spyToSystem > 499 { spyToSystem = 499 }
+if spyToSystem > SYSTEMS { spyToSystem = SYSTEMS }
 for system = spyFromSystem; system <= spyToSystem; system++ {
     systemInfos, _ = GalaxyInfos(origin.GetCoordinate().Galaxy, system)
     for i = 1; i <= 15; i++ {
