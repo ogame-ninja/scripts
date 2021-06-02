@@ -6,7 +6,10 @@ func checkFreeSlots() {
 			waitTime = 0
 			for f in fleet {
 				if waitTime == 0 || f.BackIn < waitTime {
+					if f.Mission == PARK { waitTime = f.BackIn / 2 
+					} else {
 					waitTime = f.BackIn
+					}
 				}
 			}
 			LogInfo("[RECYCLE OWN DF] dont have slot for Recycler, wait", ShortDur(waitTime))
