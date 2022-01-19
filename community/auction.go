@@ -1,38 +1,55 @@
-/* Created by Bull and Notriv
+/* Created by Bull, Notriv and LordMike
  * It is not perfect. However, a quick start for many
  */
  
 /*
- * VERSION 1.00
+ * VERSION 1.10
  */
- 
 
 /* DESCRIPTION
  * Automatically bid on auctions
- * Maximum resources adjustable
- * Which resource bidding is adjustable
+ * Maximum resources customizable per type of auctioned item
  */
 
 /*---------------------------------------------------------------------------------------------------------------------------*/
 
 
-
 //######################################## SETTINGS START ########################################
 
-highestBid = 5000000                //what is the maximum bid
+// Add maximum bids here, the strings are substrings, so you could put 
+// in 'metal' and bid that limit for all "metal" items
+highestBids = {}
+highestBids['bronze'] = 50000
+highestBids['silver'] = 500000
+highestBids['gold'] = 10000000
+highestBids['platinum'] = 20000000
+
 metBid = true                       //should you bid with metal?
 crysBid = false                     //should you bid with crystal?
 deutBid = false                     //should you bid with deuterium?
-bidHome = "M:1:234:5"               //from which planet should be bid?
+bidHome = "P:1:234:5"               //from which planet should be bid?
 
 //######################################## SETTINGS END ########################################
 
+var strings = import("strings")
 
 ownPlayerID = GetCachedPlayer().PlayerID
 celt = GetCachedCelestial(bidHome)
 if celt == nil {
     LogError(bidHome + " is not one of your planet/moon")
     return
+}
+
+func DetermineMaxBid(name) {
+    for key, highestBid in highestBids {
+        if strings.Contains(name, key) {
+            LogDebug("Detected '" + name + "' as '" + key + "', highest bid: " + Dotify(highestBid))
+            return highestBid;
+        }
+    }
+    
+    LogWarn("Unable to map '" + name + "' to a bid value, skipping")
+    return 0;
 }
 
 func AucDo(ress) {
@@ -49,25 +66,25 @@ func AucDo(ress) {
 
 func refreshTime(TimeEnd) {
     switch TimeEnd {     
-        case TimeEnd <= 300:                    //5 min
-        LogDebug("Only 5 min")
-        return Random(2, 5)
+        case TimeEnd <= 300:
+            LogDebug("Only 5 min")
+            return Random(2, 5)
 
-        case TimeEnd <= 600:                    //10 min
-        LogDebug("Only 10 Min")                        
-        return Random(60, 120)
+        case TimeEnd <= 600:
+            LogDebug("Only 10 Min")                        
+            return Random(60, 120)
 
-        case TimeEnd <= 1800:                   //30 min
-        LogDebug("Only 30 Min")                        
-        return Random(180, 300)
+        case TimeEnd <= 1800:
+            LogDebug("Only 30 Min")                        
+            return Random(180, 300)
 
-        case TimeEnd <= 3600:                   //60 min
-        LogDebug("Only 60 Min")                        
-        return Random(300, 600)
+        case TimeEnd <= 3600:
+            LogDebug("Only 60 Min")                        
+            return Random(300, 600)
 
         default:
-        LogError("Unknown TimeEnd value", TimeEnd)
-        return Random(5, 10)
+            LogError("Unknown TimeEnd value", TimeEnd)
+            return Random(5, 10)
     }
 }
 
@@ -75,7 +92,7 @@ func customSleep(sleepTime) {
     if sleepTime <= 0 {
         sleepTime = Random(5, 10)
     }
-    LogInfo("Wait " + ShortDur(sleepTime))
+    LogDebug("Wait " + ShortDur(sleepTime))
     Sleep(sleepTime * 1000)
 }
 
@@ -91,6 +108,7 @@ func processAuction() {
         LogError(err)
         return Random(5, 10)
     }
+    
     if auc.HasFinished {
         if auc.Endtime > 7200 {
             LogInfo("There is currently no auction")
@@ -100,18 +118,29 @@ func processAuction() {
         didWon(auc)
         return auc.Endtime + 10
     }
+    
+    highestBid = DetermineMaxBid(auc.CurrentItem)
+    if highestBid <= 0 {
+        LogInfo("Skipping auction for '" + auc.CurrentItem + "'")
+        return auc.Endtime + 10
+    }
+    
+    if auc.AlreadyBid == 0 {
+        LogDebug("Willing to bid " + Dotify(highestBid) + " for '" + auc.CurrentItem + "'")
+    }
+    
     if auc.HighestBidderUserID == ownPlayerID {
-        LogInfo("You are the highest bidder!")
+        LogDebug("Already highest bidder for '" + auc.CurrentItem + "' at " + Dotify(auc.CurrentBid) + " / " + Dotify(highestBid) + ", waiting..")
         return refreshTime(auc.Endtime)
     }
     if auc.MinimumBid > highestBid {
-        LogInfo("Resources exceeded! Wait until the next auction!")
+        LogWarn("Resources exceeded for '" + auc.CurrentItem + "', currently at " + Dotify(auc.CurrentBid) + " / " + Dotify(highestBid) + "")
         return auc.Endtime + 10
     }
 
-    ress = auc.MinimumBid - auc.AlreadyBid
-    LogInfo("You are not the highest bidder! Bid " + Dotify(ress) + " resources!")
-    err = AucDo(ress)
+    shouldBid = auc.MinimumBid - auc.AlreadyBid
+    LogInfo("Bidding " + Dotify(auc.AlreadyBid) + " + " + Dotify(shouldBid) + " / " + Dotify(highestBid) + " resources for '" + auc.CurrentItem + "'")
+    err = AucDo(shouldBid)
     if err != nil {
         LogError(err)
         return Random(5, 10)
