@@ -8,6 +8,19 @@ func handleOGameMessage(msg) {
 }
 
 func handleTelegramMessage(msg) {
+    if msg.ReplyToMessage.MessageID != 0 {
+        parts = strings.Split(msg.ReplyToMessage.Text, ", ")
+        botID = strings.Split(parts[0], "Bot: ")[1]
+        playerID = strings.Split(parts[1], "PlayerID: ")[1]
+        msgToSend = msg.Text
+        err = SendMessage(Atoi(playerID), msgToSend)
+        if err != nil {
+            LogError("SendMessage: ", err, playerID, msgToSend)
+            return
+        }
+        Print("Message was sent")
+        return
+    }
     parts = strings.Split(msg.Text, " ")
     if len(parts) >= 2 {
         targetBotID = parts[0]
