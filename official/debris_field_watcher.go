@@ -1,4 +1,4 @@
-debrisCoord = NewCoordinate(1, 2, 3, DEBRIS_TYPE)
+debrisCoord, _ = ParseCoord("D:1:2:3")
 delaySecs = 2
 for {
     systemInfo, _ = GalaxyInfos(debrisCoord.Galaxy, debrisCoord.System)
