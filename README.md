@@ -25,6 +25,7 @@
 [Send expeditions, will use all the expeditions slots.](official/expeditions.go)  
 [Send telegram notification when private chat message is received](official/private_chat_notifications.go)  
 [Send random message to attackers](official/message_attackers.go)  
+[Send discovery fleet](official/send_discovery_fleet)  
 
 ### Contributions are welcome
 
