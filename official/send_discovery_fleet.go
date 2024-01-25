@@ -23,7 +23,7 @@ for system in systems {
         continue
     }
     if len(availCoords) == 0 {
-        LogDebug("no available coords in [" + galaxy + ", " + system + "]")
+        LogDebug("no available coords in [" + cCoord.Galaxy + ", " + system + "]")
         continue
     }
     i = 0
