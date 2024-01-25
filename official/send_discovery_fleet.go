@@ -1,4 +1,4 @@
-origin = "1:2:3"
+origin = "3:92:12"
 systemsRange = 10
 
 //---------------------------
@@ -29,8 +29,8 @@ for system in systems {
     i = 0
     for {
         if totalSlots == 0 {
-            LogDebug("no slots available, wait 10min")
-            SleepMin(10)
+            LogDebug("no slots available, wait 8-10min")
+            SleepRandMin(8, 10)
             totalSlots = getUpdatedSlots()
             continue
         }
@@ -39,11 +39,11 @@ for system in systems {
         if err != nil {
             LogError(err)
             if strings.Contains(err.Error(), "Maximum number of fleets reached") {
-                SleepMin(10)
+                SleepRandMin(8, 10)
                 totalSlots = getUpdatedSlots()
             }
             if strings.Contains(err.Error(), "Not enough resources") {
-                SleepMin(10)
+                SleepRandMin(8, 10)
                 totalSlots = getUpdatedSlots()
             }
             SleepSec(5)
