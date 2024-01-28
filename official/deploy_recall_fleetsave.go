@@ -8,7 +8,7 @@ sendTo = "M:1:2:4" // Sending fleet to here.
 deutToLeave = 1500000 // Enter how much deut to leave behind when fleetsaving.
 
 // Enter your Telegram Chat ID.
-TelegramID = EnterTelegramIDHere
+TelegramID = TELEGRAM_CHAT_ID
 
 /* Sends at the desired fleet speed, if 20% fleet speed results in a 8 hour flight time one way then - 
 that's how long the total flight time will be. */
