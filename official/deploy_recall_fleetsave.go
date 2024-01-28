@@ -23,7 +23,7 @@ deutToTake = resources.Deuterium.Available - deutToLeave
 // Variables for Telegram usage.
 universeName = GetUniverseName()
 playerName = GetCachedPlayer().PlayerName
-uniPlayerName = universeName + " - " + playerName
+uniPlayerName = universeName + " - " + playerName + ":"
 
 // Creates a new fleet object for fleetsaving.
 mainFleet = NewFleet()
