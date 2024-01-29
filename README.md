@@ -26,6 +26,7 @@
 [Send telegram notification when private chat message is received](official/private_chat_notifications.go)  
 [Send random message to attackers](official/message_attackers.go)  
 [Send discovery fleet](official/send_discovery_fleet.go)  
+[Auto colony builder](official/auto_colony_builder.go)  
 
 ### Contributions are welcome
 
