@@ -51,6 +51,9 @@ Logout()
 // Recalls the deploy half-way through the flight with slight randomisation
 Sleep(Random(half * 980, half * 1010))
 
+// Stops Sleep mode.
+StopSleepMode()
+
 // Logs you in if logged out.
 if !IsLoggedIn() {
     Login()
@@ -61,6 +64,7 @@ if !IsLoggedIn() {
 CancelFleet(fleet.ID)
 SendTelegram(TelegramID, uniPlayerName + " Recalled fleet")
 (Sleep(Random(3,12)*1000))
+StartSleepMode()
 Logout()
 
 // Logs you back in before your fleet lands, that way if defender is active your fleet is safe when it lands.
