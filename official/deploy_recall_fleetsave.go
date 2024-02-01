@@ -21,6 +21,7 @@ func enoughDeutCheck() {
     resources, err = GetResourcesDetails(sendFrom)
     return resources.Deuterium.Available
 }
+
 // Calculate deut to take.
 celestial = GetCachedCelestial(sendFrom)
 resources, err = GetResourcesDetails(celestial.GetID())
@@ -45,7 +46,7 @@ mainFleet.SetDeuterium(deutToTake - fuel)
 enoughDeutForFlight = enoughDeutCheck()
 fleet, err = mainFleet.SendNow()
 
-// If we do not have enough deut the fleet isn't sent.
+// If we do not have enough Deut the fleet cannot be sent, warning message is sent to Telegram.
 if enoughDeutForFlight < fuel {
     SendTelegram(TelegramID, uniPlayerName + " WARNING: Not enough Deut to fleetsave, please check and try again!")
     return
