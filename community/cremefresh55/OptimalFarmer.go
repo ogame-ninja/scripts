@@ -69,6 +69,7 @@ useTelegram = true; //Message for these steps:
 
 // ### Saving or Sending to Home planet (Gathering)
 home_planet = "P:2:247:7"
+
 send_to_home = true // At the end of the whole farming and with this set true
                     // all your farm planets will send all ressources to home_planet
 
@@ -161,39 +162,34 @@ func sort(array_res,array_koord){
     }     
 }
 func send_to_home_planet() {
-   
     for planet in farm_planets {
-       
         if planet != home_planet {
-        
-         
-                celestial, _ = GetCelestial(planet)
-                res, _ =  celestial.GetResources()
-                 all_ships, _ =  celestial.GetShips()
-                met =  res.Metal
-                crys =  res.Crystal
-                deut =  res.Deuterium - 75000
-                res_to_send = NewResources(met, crys, deut)
-                lc, sc, cargo = CalcFastCargo( all_ships.LargeCargo, all_ships.SmallCargo,  res_to_send.Total())
-                si = NewShipsInfos()
-                si.Set(LARGECARGO, lc)
-                si.Set(SMALLCARGO, sc)
-                coord_home, _ = ParseCoord(home_planet)
-                _, fuel = FlightTime(celestial.GetCoordinate(), coord_home, HUNDRED_PERCENT, *si)
-                deut -= fuel
-                res_to_send = NewResources(met, crys, deut)
-                fleet = NewFleet()
-                fleet.SetOrigin(planet)
-                fleet.SetDestination(home_planet)
-                fleet.SetMission(TRANSPORT)
-                fleet.SetSpeed(HUNDRED_PERCENT)
-                fleet.SetResources( res_to_send)
-                fleet.AddShips(LARGECARGO, lc)
-                fleet.AddShips(SMALLCARGO, sc)
-                f, err = fleet.SendNow()
-                print("test")
-                Sleep(Random(3000, 6000))
-            
+            celestial, _ = GetCelestial(planet)
+            res, _ =  celestial.GetResources()
+            all_ships, _ =  celestial.GetShips()
+            met =  res.Metal
+            crys =  res.Crystal
+            deut =  res.Deuterium - 75000
+            res_to_send = NewResources(met, crys, deut)
+            lc, sc, cargo = CalcFastCargo( all_ships.LargeCargo, all_ships.SmallCargo,  res_to_send.Total())
+            si = NewShipsInfos()
+            si.Set(LARGECARGO, lc)
+            si.Set(SMALLCARGO, sc)
+            coord_home, _ = ParseCoord(home_planet)
+            _, fuel = FlightTime(celestial.GetCoordinate(), coord_home, HUNDRED_PERCENT, *si)
+            deut -= fuel
+            res_to_send = NewResources(met, crys, deut)
+            fleet = NewFleet()
+            fleet.SetOrigin(planet)
+            fleet.SetDestination(home_planet)
+            fleet.SetMission(TRANSPORT)
+            fleet.SetSpeed(HUNDRED_PERCENT)
+            fleet.SetResources( res_to_send)
+            fleet.AddShips(LARGECARGO, lc)
+            fleet.AddShips(SMALLCARGO, sc)
+            f, err = fleet.SendNow()
+            print("test")
+            Sleep(Random(3000, 6000))
         }
     }
 }
@@ -204,107 +200,97 @@ quitter = false
 highest_flight_time = 0
 
 
-       
 func farmer(){
     ts = GetTimestamp() + 3600 * end_after_x_hours
-      if(use_shuffle == true){
-                   if(sys_radius > 0){
-                       shuffle(farm_planets)
-                    }else{
-                        shuffle2(farm_planets,system_lower_range,system_upper_range)
-                    }
-            }
+    if use_shuffle == true {
+        if(sys_radius > 0){
+            shuffle(farm_planets)
+        }else{
+            shuffle2(farm_planets,system_lower_range,system_upper_range)
+        }
+    }
              
     for quitter == false{
-           slots = GetSlots()
-           hard_init_slot = slots.InUse
-        
-            planet = []
-            planet_counter = 0;
-            all_inactives_coords = []
-            all_inactive_res = []
+        slots = GetSlots()
+        hard_init_slot = slots.InUse
+        planet = []
+        planet_counter = 0;
+        all_inactives_coords = []
+        all_inactive_res = []
     
-        
-         
-            //Spying
-            for planet_counter = 0 ; planet_counter < len(farm_planets) ; planet_counter++ {
-                planet, _ = GetCelestial(farm_planets[planet_counter])
-                galaxy = planet.GetCoordinate().Galaxy
-                system = planet.GetCoordinate().System
-                
-                if(sys_radius > 0){
-                sys_a = system - sys_radius 
-                sys_b = system + sys_radius 
-                
-                }else{
+        //Spying
+        for planet_counter = 0 ; planet_counter < len(farm_planets) ; planet_counter++ {
+            current_planet, _ = ParseCoord(farm_planets[planet_counter])
+            galaxy = current_planet.Galaxy
+            system = current_planet.System
+            planet, _ = GetCelestial("P:"+Itoa(current_planet.Galaxy)+":"+Itoa(current_planet.System)+":"+Itoa(current_planet.Position))
+            if sys_radius > 0 {
+            sys_a = system - sys_radius 
+            sys_b = system + sys_radius 
+            } else {
                 sys_a = system - system_lower_range[planet_counter]
                 sys_b = system + system_upper_range[planet_counter]
-                }
-                if(sys_a < 1){
-                    sys_a = 1
-                }
-                if(sys_a > 499){
-                    sys_a = 499
-                }
-                if(sys_b < 1){
-                    sys_b = 1
-                }
-                if(sys_b > 499){
-                    sys_b = 499
-                }
- 
-                 if useTelegram {
-                    SendTelegram(TELEGRAM_CHAT_ID, "Scanning planets for farmplanet: "+farm_planets[planet_counter])    
-                }
-
-                 //Save all spy reports
-                counter = 0
-                for i = sys_a ; i < sys_b+1 ; i++ {
-                    systemInfo, _ = GalaxyInfos(galaxy, i)
-                    
-                    for j = 1; j < 16; j++ {
-                      if(systemInfo.Position(j) != nil){
-                          planetInfo = systemInfo.Position(j)
-                          inactive = planetInfo.Inactive
-                          rank = planetInfo.Player.Rank
-                          vacation =  planetInfo.Vacation
-                          banned =  planetInfo.Banned
-                          if(inactive == true && rank < min_player_rank && vacation == false && banned == false){
-                                all_inactives_coords[counter] = planetInfo.Coordinate
-                                 counter = counter +1  
-                          }
-                      }
-                    }
-                }   
-                
-                   if useTelegram {
-                    SendTelegram(TELEGRAM_CHAT_ID, "Scanning complete! Now spying inactives")    
+            }
+            if(sys_a < 1){
+                sys_a = 1
+            }
+            if(sys_a > 499){
+                sys_a = 499
+            }
+            if(sys_b < 1){
+                sys_b = 1
+            }
+            if(sys_b > 499){
+                sys_b = 499
+            }
+            if useTelegram {
+                SendTelegram(TELEGRAM_CHAT_ID, "Scanning planets for farmplanet: "+farm_planets[planet_counter])    
+            }
+            //Save all spy reports
+            counter = 0
+            for i = sys_a ; i < sys_b+1 ; i++ {
+                systemInfo, _ = GalaxyInfos(galaxy, i)
+                for j = 1; j < 16; j++ {
+                    if(systemInfo.Position(j) != nil){
+                        planetInfo = systemInfo.Position(j)
+                        inactive = planetInfo.Inactive
+                        rank = planetInfo.Player.Rank
+                        vacation =  planetInfo.Vacation
+                        banned =  planetInfo.Banned
+                        if inactive == true && rank < min_player_rank && vacation == false && banned == false {
+                            all_inactives_coords[counter] = planetInfo.Coordinate
+                            counter = counter +1  
                         }
-                print("Inactive: "+len(all_inactives_coords))
-                slots = GetSlots()
-                slots_in_use = slots.InUse
-                slots_total = slots.Total
-                slots_reserved = GetFleetSlotsReserved()
-                if(len(all_inactives_coords) > 0){
-                    for i = 0 ; i < len(all_inactives_coords) ; i++ {
-                       slots = GetSlots()
-                     slots_in_use = slots.InUse
-                      all_ships, _ =  planet.GetShips()
-                      spyprobes = all_ships.EspionageProbe 
-                     for{
-                            if( slots_in_use < slots_total-slots_reserved &&   spyprobes >= esp_probes_for_scans){
-                      
-                               
-                                break
-                             }
-                              slots = GetSlots()
-                                 slots_in_use = slots.InUse
-                                 all_ships, _ =  planet.GetShips()
-                                   spyprobes = all_ships.EspionageProbe 
-                             print("slots "+ slots_in_use)
-                             print("spyprobes "+spyprobes)
-                              Sleep(5000) // Waiting for free slot
-                     }
+                    }
+                }
+            }   
+                
+            if useTelegram {
+                SendTelegram(TELEGRAM_CHAT_ID, "Scanning complete! Now spying inactives")    
+            }
+            print("Inactive: "+len(all_inactives_coords))
+            slots = GetSlots()
+            slots_in_use = slots.InUse
+            slots_total = slots.Total
+            slots_reserved = GetFleetSlotsReserved()
+            if len(all_inactives_coords) > 0 {
+                for i = 0 ; i < len(all_inactives_coords) ; i++ {
+                    slots = GetSlots()
+                    slots_in_use = slots.InUse
+                    all_ships, _ = planet.GetShips()
+                    spyprobes = all_ships.EspionageProbe 
+                    for {
+                        if slots_in_use < slots_total-slots_reserved && spyprobes >= esp_probes_for_scans {
+                            break
+                        }
+                        slots = GetSlots()
+                        slots_in_use = slots.InUse
+                        all_ships, _ =  planet.GetShips()
+                        spyprobes = all_ships.EspionageProbe 
+                        print("slots "+ slots_in_use)
+                        print("spyprobes "+spyprobes)
+                        Sleep(5000) // Waiting for free slot
+                    }
                     fleet = NewFleet()
                     fleet.SetOrigin(planet)
                     fleet.SetDestination(all_inactives_coords[i])
@@ -312,129 +298,112 @@ func farmer(){
                     fleet.AddShips(ESPIONAGEPROBE, esp_probes_for_scans)
                     fleet, err = fleet.SendNow()
                     Sleep(Random(delay_between_spy_missions[0],delay_between_spy_missions[1]))
-                    }    
-                }
+                }    
+            }
+            Sleep(1000*10)
+            Sleep(Random(1000*delay_after_spy_to_attack_missions[0],1000*delay_after_spy_to_attack_missions[1])) // Give 2min for deploying
                 
-                Sleep(1000*10)
-                Sleep(Random(1000*delay_after_spy_to_attack_missions[0],1000*delay_after_spy_to_attack_missions[1])) // Give 2min for deploying
-                
-                 //Get total Res of all spyreports
-                for i = 0 ; i < len(all_inactives_coords) ; i++{
-                    report,error1 = GetEspionageReportFor(all_inactives_coords[i])
-                    if(attack_if_last_active != 0){
-                        if((report.LastActivity > attack_if_last_active || report.LastActivity == nil )&& report.HasFleet == true && report.HasDefenses == true && report.RocketLauncher == nil && report.LightLaser  == nil && report.HeavyLaser == nil && report.GaussCannon == nil && report.IonCannon == nil && report.PlasmaTurret == nil && report.SmallShieldDome == nil && report.LargeShieldDome == nil && report.LightFighter == nil && report.HeavyFighter == nil && report.Cruiser == nil && report.Battleship == nil && report.Battlecruiser == nil && report.Bomber == nil && report.Destroyer == nil && report.Deathstar == nil && report.SmallCargo == nil && report.LargeCargo == nil && report.ColonyShip == nil && report.Recycler == nil){
-                          all_inactive_res[i] = report.Total()  
-                          print("TOTAL RES: "+   all_inactive_res[i]+" COORDS: "+all_inactives_coords[i]  )
-                        } else{
-                            all_inactive_res[i] = 0
-                            print("TOTAL RES: "+   all_inactive_res[i]+" COORDS: "+all_inactives_coords[i]  )
-                        }
-                    }else{
-                           if(report.HasFleet == true && report.HasDefenses == true && report.RocketLauncher == nil && report.LightLaser  == nil && report.HeavyLaser == nil && report.GaussCannon == nil && report.IonCannon == nil && report.PlasmaTurret == nil && report.SmallShieldDome == nil && report.LargeShieldDome == nil && report.LightFighter == nil && report.HeavyFighter == nil && report.Cruiser == nil && report.Battleship == nil && report.Battlecruiser == nil && report.Bomber == nil && report.Destroyer == nil && report.Deathstar == nil && report.SmallCargo == nil && report.LargeCargo == nil && report.ColonyShip == nil && report.Recycler == nil){
-                          all_inactive_res[i] = report.Total()  
-                          print("TOTAL RES: "+   all_inactive_res[i]+" COORDS: "+all_inactives_coords[i]  )
-                        } else{
-                            all_inactive_res[i] = 0
-                            print("TOTAL RES: "+   all_inactive_res[i]+" COORDS: "+all_inactives_coords[i]  )
-                        }
+            //Get total Res of all spyreports
+            for i = 0 ; i < len(all_inactives_coords) ; i++{
+                report,error1 = GetEspionageReportFor(all_inactives_coords[i])
+                if(attack_if_last_active != 0){
+                    if((report.LastActivity > attack_if_last_active || report.LastActivity == nil )&& report.HasFleet == true && report.HasDefenses == true && report.RocketLauncher == nil && report.LightLaser  == nil && report.HeavyLaser == nil && report.GaussCannon == nil && report.IonCannon == nil && report.PlasmaTurret == nil && report.SmallShieldDome == nil && report.LargeShieldDome == nil && report.LightFighter == nil && report.HeavyFighter == nil && report.Cruiser == nil && report.Battleship == nil && report.Battlecruiser == nil && report.Bomber == nil && report.Destroyer == nil && report.Deathstar == nil && report.SmallCargo == nil && report.LargeCargo == nil && report.ColonyShip == nil && report.Recycler == nil){
+                        all_inactive_res[i] = report.Total()  
+                        print("TOTAL RES: "+   all_inactive_res[i]+" COORDS: "+all_inactives_coords[i]  )
+                    } else{
+                        all_inactive_res[i] = 0
+                        print("TOTAL RES: "+   all_inactive_res[i]+" COORDS: "+all_inactives_coords[i]  )
                     }
-                 
-                }
-                //Check Slots
-                slots = GetSlots()
-                slots_in_use = slots.InUse
-                slots_total = slots.Total
-                slots_reserved = GetFleetSlotsReserved()
-                attacks_to_make = slots_total - slots.InUse - slots_reserved 
-
-                
-                    if useTelegram {
-                    SendTelegram(TELEGRAM_CHAT_ID, "Found "+attacks_to_make+" targets for planet: "+farm_planets[planet_counter])    
-                }
-
-            
-                //Sort Res  & Coords Array by value
-                if(len(all_inactives_coords) > 0){
-                     sort(all_inactive_res,all_inactives_coords)
-                  }
-                // Sorting Out bad spy reports
-                attacks_to_make_temp = 0
-                for i = 0 ; i < len(all_inactive_res) ; i++{
-                    if(all_inactive_res[i] != 0){
-                        attacks_to_make_temp = attacks_to_make_temp +1
+                }else{
+                    if(report.HasFleet == true && report.HasDefenses == true && report.RocketLauncher == nil && report.LightLaser  == nil && report.HeavyLaser == nil && report.GaussCannon == nil && report.IonCannon == nil && report.PlasmaTurret == nil && report.SmallShieldDome == nil && report.LargeShieldDome == nil && report.LightFighter == nil && report.HeavyFighter == nil && report.Cruiser == nil && report.Battleship == nil && report.Battlecruiser == nil && report.Bomber == nil && report.Destroyer == nil && report.Deathstar == nil && report.SmallCargo == nil && report.LargeCargo == nil && report.ColonyShip == nil && report.Recycler == nil){
+                        all_inactive_res[i] = report.Total()  
+                        print("TOTAL RES: "+   all_inactive_res[i]+" COORDS: "+all_inactives_coords[i]  )
+                    } else{
+                        all_inactive_res[i] = 0
+                        print("TOTAL RES: "+   all_inactive_res[i]+" COORDS: "+all_inactives_coords[i]  )
                     }
                 }
-                if(attacks_to_make_temp < attacks_to_make){
-                    attacks_to_make = attacks_to_make_temp
+            }
+            //Check Slots
+            slots = GetSlots()
+            slots_in_use = slots.InUse
+            slots_total = slots.Total
+            slots_reserved = GetFleetSlotsReserved()
+            attacks_to_make = slots_total - slots.InUse - slots_reserved 
+            if useTelegram {
+                SendTelegram(TELEGRAM_CHAT_ID, "Found "+attacks_to_make+" targets for planet: "+farm_planets[planet_counter])    
+            }
+            //Sort Res  & Coords Array by value
+            if(len(all_inactives_coords) > 0){
+                sort(all_inactive_res,all_inactives_coords)
+            }
+            // Sorting Out bad spy reports
+            attacks_to_make_temp = 0
+            for i = 0 ; i < len(all_inactive_res) ; i++{
+                if(all_inactive_res[i] != 0){
+                    attacks_to_make_temp = attacks_to_make_temp +1
                 }
-                if(len(all_inactives_coords) < attacks_to_make ){
-                    attacks_to_make = len(all_inactives_coords)
-                }
-                print("Atk Temp: "+attacks_to_make_temp)
-                 print("Atk To Make: "+attacks_to_make)
-                 
-  
-                  highest_system = 0
-                  have_large_cargo = false;
+            }
+            if(attacks_to_make_temp < attacks_to_make){
+                attacks_to_make = attacks_to_make_temp
+            }
+            if(len(all_inactives_coords) < attacks_to_make ){
+                attacks_to_make = len(all_inactives_coords)
+            }
+            print("Atk Temp: "+attacks_to_make_temp)
+            print("Atk To Make: "+attacks_to_make)
+            highest_system = 0
+                have_large_cargo = false;
                 if(len(all_inactives_coords) > 0 &&  len(all_inactive_res) > 0 ){
-                     for i = 0; i < attacks_to_make ; i++{
-                        fleet = NewFleet()
-                        fleet.SetOrigin(planet)
-                        system = all_inactives_coords[i].System
-                        system_dif = Abs(planet.GetCoordinate().System - system)
-                        if(system_dif > highest_system){
-                            highest_system = system_dif
-                        }
-                        fleet.SetDestination(all_inactives_coords[i])
-                        fleet.SetMission(ATTACK)
-                        //Res 
-                        res = all_inactive_res[i]
-                        //Calc SmallCargos
-                        all_ships, _ =  planet.GetShips()
-                        lc, sc, cargo = CalcFastCargo( all_ships.LargeCargo, all_ships.SmallCargo,  res/2)
-                        if(lc > 0){
-                                 have_large_cargo  = true
-                        }
-                        fleet.AddShips(LARGECARGO, lc)
-                        fleet.AddShips(SMALLCARGO, sc+Round(sc*additional_cargos/100))
-                        fleet, err = fleet.SendNow()
-                        Sleep(Random(delay_between_attack_missions[0],delay_between_attack_missions[1])) 
-                    }  
-                        highest_flight_time =  calc_highest_flight_time(highest_system,have_large_cargo )
-                        print("Sleep for: "+ShortDur(highest_flight_time))
-              
+                for i = 0; i < attacks_to_make ; i++{
+                    fleet = NewFleet()
+                    fleet.SetOrigin(planet)
+                    system = all_inactives_coords[i].System
+                    system_dif = Abs(planet.GetCoordinate().System - system)
+                    if(system_dif > highest_system){
+                        highest_system = system_dif
                     }
-               
-              
-                all_inactives_coords = []
-                all_inactive_res = []
-                planet = []
-           
-                //Pause program until slots are 0 => Ready to Scan Again
-                 Sleep(highest_flight_time*2*1000)
-                 
-                  if useTelegram {
-                    SendTelegram(TELEGRAM_CHAT_ID, "Attack complete session for planet: "+farm_planets[planet_counter]+" is complete" )    
-                }
-
-                 Sleep(Random(delay_after_attack_to_next_planet[0],delay_after_attack_to_next_planet[1])) 
-
+                    fleet.SetDestination(all_inactives_coords[i])
+                    fleet.SetMission(ATTACK)
+                    //Res 
+                    res = all_inactive_res[i]
+                    //Calc SmallCargos
+                    all_ships, _ =  planet.GetShips()
+                    lc, sc, cargo = CalcFastCargo( all_ships.LargeCargo, all_ships.SmallCargo,  res/2)
+                    if(lc > 0){
+                        have_large_cargo  = true
+                    }
+                    fleet.AddShips(LARGECARGO, lc)
+                    fleet.AddShips(SMALLCARGO, sc+Round(sc*additional_cargos/100))
+                    fleet, err = fleet.SendNow()
+                    Sleep(Random(delay_between_attack_missions[0],delay_between_attack_missions[1])) 
+                }  
+                highest_flight_time =  calc_highest_flight_time(highest_system,have_large_cargo )
+                print("Sleep for: "+ShortDur(highest_flight_time))
             }
-          new_ts = GetTimestamp()
-            if(new_ts >= ts){
-                print("Break!")
-                break
+            ll_inactives_coords = []
+            all_inactive_res = []
+            planet = []
+            //Pause program until slots are 0 => Ready to Scan Again
+            Sleep(highest_flight_time*2*1000)
+            if useTelegram {
+                SendTelegram(TELEGRAM_CHAT_ID, "Attack complete session for planet: "+farm_planets[planet_counter]+" is complete" )    
             }
+            Sleep(Random(delay_after_attack_to_next_planet[0],delay_after_attack_to_next_planet[1])) 
+        }
+        new_ts = GetTimestamp()
+        if(new_ts >= ts){
+            print("Break!")
+            break
+        }
     
     }
-     if(save_fleet){
-                StartScript("FleetSave.ank")
-            }else if(send_to_home == true){
-               send_to_home_planet() 
-                  if useTelegram {
-                    SendTelegram(TELEGRAM_CHAT_ID, "Sending all ressources to homeplanet!" )    
-                }
-            }
+    if(send_to_home == true){
+        send_to_home_planet() 
+        if useTelegram {
+            SendTelegram(TELEGRAM_CHAT_ID, "Sending all ressources to homeplanet!" )    
+        }
+    }
 }
 CronExec(starttime,farmer) // Execute callback every day at midnight
 <-OnQuitCh
