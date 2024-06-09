@@ -5,12 +5,12 @@ master = "1:2:3"
 //------------------------------------------------------------------------------
 masterCoord, _ = ParseCoord(master)
 for celestial in GetCachedCelestials() {
-	if celestial.GetCoordinate().Equal(masterCoord) {
-		continue
-	}
-	resources, err = celestial.GetResources()
-	ships, err = celestial.GetShips()
-	lc, sc, cargo = CalcFastCargo(ships.LargeCargo, ships.SmallCargo, resources.Total())
+    if celestial.GetCoordinate().Equal(masterCoord) {
+        continue
+    }
+    resources, err = celestial.GetResources()
+    ships, err = celestial.GetShips()
+    lc, sc, cargo = CalcFastCargo(ships.LargeCargo, ships.SmallCargo, resources.Total())
     fleet = NewFleet()
     fleet.SetOrigin(celestial)
     fleet.SetDestination(master)
