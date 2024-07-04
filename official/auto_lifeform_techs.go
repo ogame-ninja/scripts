@@ -13,9 +13,7 @@ useArtefacts = true
 
 errors = import("errors")
 
-// Hack to get the lifeform type for this planet
-lfBuildings, _ = GetLfBuildings(coord)
-lfType = lfBuildings.LifeformType
+lfType = GetPlanetLifeformType(coord)
 
 // Check the slots (up to slotNumber), and ensure it matches the wanted techs.
 // Return true if all techs are the ones we want.
