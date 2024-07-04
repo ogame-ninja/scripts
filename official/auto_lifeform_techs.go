@@ -1,4 +1,4 @@
-coord = "1:2:3"
+coord = "1:106:10"
 wantedTier1 = [
     INTERGALACTICENVOYS,
     ACOUSTICSCANNING,
@@ -8,8 +8,6 @@ wantedTier1 = [
     AUTOMATEDTRANSPORTLINES,
 ]
 useArtefacts = true
-
-//----------------------------------------------------------------------
 
 errors = import("errors")
 
@@ -41,18 +39,6 @@ func canSelectTech(lfType, techID) {
     return (lfType == HUMANS  && techID in LfTechnologiesHumansArr ) || (lfType == ROCKTAL && techID in LfTechnologiesRocktalArr) || (lfType == MECHAS  && techID in LfTechnologiesMechasArr ) || (lfType == KAELESH && techID in LfTechnologiesKaeleshArr)
 }
 
-// AvailableSlot return the slotNumber (1-18) available for research. 0 if none is available.
-func AvailableSlot(lfResearchDetails) {
-    idx = 0
-	for slot in lfResearchDetails.Slots {
-	    idx++
-		if slot.Allowed {
-			return idx
-		}
-	}
-	return 0
-}
-
 for {
     for {
         lfResearch, err = GetLfResearchDetails(coord)
@@ -61,7 +47,7 @@ for {
             SleepRandMin(5, 6)
             continue
         }
-        slotNumber = AvailableSlot(lfResearch)
+        slotNumber = lfResearch.AvailableSlot()
         if slotNumber >= 1 && slotNumber <= 6 {
             
             wantedTech = wantedTier1[slotNumber-1]
