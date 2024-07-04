@@ -1,4 +1,4 @@
-coord = "1:106:10"
+coord = "1:2:3"
 wantedTier1 = [
     INTERGALACTICENVOYS,
     ACOUSTICSCANNING,
@@ -8,6 +8,8 @@ wantedTier1 = [
     AUTOMATEDTRANSPORTLINES,
 ]
 useArtefacts = true
+
+//----------------------------------------------------------------------
 
 errors = import("errors")
 
