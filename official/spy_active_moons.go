@@ -1,9 +1,17 @@
-origin = GetCachedCelestial("1:2:3")           // Celestial from where to spy from
+origin = "1:2:3"                               // Celestial from where to spy from
 spyFromSystem = 1                              // Lower limit system to spy
 spyToSystem = 299                              // Upper limit system to spy
 spy2send = 2                                   // Number of spy probes to send
 playersToIgnore = ["Nickname1", "Nickname2"]   // Name of players to ignore
 alliancesToIgnore = ["Alliance1", "Alliance2"] // Name of alliances to ignore
+
+//--------------------------------------------------------------------------------
+
+originCelestial = GetCachedCelestial(origin)
+if originCelestial == nil {
+    LogError("invalid origin coordinate", origin)
+    return
+}
 
 // Skip if player is inactive or player from my alliance
 func shouldSkip(planetInfo) {
@@ -32,7 +40,7 @@ func spyCoord(coord) {
         slots = GetSlots()
         if slots.InUse < slots.Total {
             fleet = NewFleet()
-            fleet.SetOrigin(origin)
+            fleet.SetOrigin(originCelestial)
             fleet.SetDestination(coord)
             fleet.SetMission(SPY)
             fleet.AddShips(ESPIONAGEPROBE, spy2send)
@@ -49,7 +57,7 @@ func spyCoord(coord) {
 if spyFromSystem < 1 { spyFromSystem = 1 }
 if spyToSystem > SYSTEMS { spyToSystem = SYSTEMS }
 for system = spyFromSystem; system <= spyToSystem; system++ {
-    systemInfos, _ = GalaxyInfos(origin.GetCoordinate().Galaxy, system)
+    systemInfos, _ = GalaxyInfos(originCelestial.GetCoordinate().Galaxy, system)
     for i = 1; i <= 15; i++ {
         planetInfo = systemInfos.Position(i)
         if !shouldSkip(planetInfo) && planetInfo.Moon != nil {
