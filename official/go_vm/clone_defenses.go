@@ -31,6 +31,6 @@ func main() {
             }
         }
         
-        nja.Sleep(int64(60 * 60 * 1000)) // Check again in 1 hour
+        nja.Sleep(60 * 60 * 1000) // Check again in 1 hour
     }
 }
