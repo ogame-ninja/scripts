@@ -2,7 +2,7 @@ package main
 
 import (
     "fmt"
-    "nja"
+    "nja/pkg/nja"
 )
 
 func main() {
