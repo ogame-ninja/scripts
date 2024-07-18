@@ -1,8 +1,8 @@
 package main
 
 import (
-    "ogame/pkg/ogame"
-    "nja"
+    "nja/pkg/ogame"
+    "nja/pkg/nja"
     "fmt"
 )
 
