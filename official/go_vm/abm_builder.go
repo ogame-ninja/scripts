@@ -1,7 +1,7 @@
 package main
 
 import (
-    "nja"
+    "nja/pkg/nja"
 )
 
 func main() {
