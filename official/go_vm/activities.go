@@ -8,6 +8,6 @@ func main() {
 		if len(celestials) > 0 {
 			celestials[nja.Random(0, int64(len(celestials)-1))].GetFacilities()
 		}
-		nja.Sleep(nja.Random(5*60*1000, 7*60*1000))
+		nja.SleepRandMin(5, 7)
 	}
 }
