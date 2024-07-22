@@ -46,7 +46,6 @@ func main() {
 
 // Sends spy probes to a coordinate
 func spyCoord(coord ogame.Coordinate, originCelestial wrapper.Celestial) {
-	nja.Print(originCelestial)
 	for {
 		slots := nja.GetSlots()
 		if slots.InUse < slots.Total {
