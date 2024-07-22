@@ -16,8 +16,6 @@ var (
 )
 
 func main() {
-	//--------------------------------------------------------------------------------
-
 	originCelestial := nja.GetCachedCelestial(origin)
 	if originCelestial == nil {
 		nja.LogError("invalid origin coordinate", origin)
