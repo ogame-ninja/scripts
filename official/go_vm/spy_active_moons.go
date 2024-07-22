@@ -35,22 +35,18 @@ func main() {
 		systemInfos, _ := nja.GalaxyInfos(originCelestial.GetCoordinate().Galaxy, int64(system))
 		for i := 1; i <= 15; i++ {
 			planetInfo := systemInfos.Position(int64(i))
- 			if !shouldSkip(planetInfo) && planetInfo.Moon != nil {
+			if !shouldSkip(planetInfo) && planetInfo.Moon != nil {
 				pCoord := planetInfo.Coordinate
 				mCoord := pCoord.Moon()
-				spyCoord(mCoord)
- 			}
+				spyCoord(mCoord, originCelestial)
+			}
 		}
 	}
 }
 
 // Sends spy probes to a coordinate
-func spyCoord(coord ogame.Coordinate) {
-    originCelestial := nja.GetCachedCelestial(origin)
-	if originCelestial == nil {
-		nja.LogError("invalid origin coordinate", origin)
-		return
-	}
+func spyCoord(coord ogame.Coordinate, originCelestial wrapper.Celestial) {
+	nja.Print(originCelestial)
 	for {
 		slots := nja.GetSlots()
 		if slots.InUse < slots.Total {
