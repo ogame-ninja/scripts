@@ -128,7 +128,7 @@ func main() {
 			wait := int64(1)
 			found := true
 			if oid.IsShip() || oid.IsDefense() {
-				if !itemInProductionLine(oid) {
+				if !itemInProductionLine(celestial, oid) {
 					found = false
 				}
 			} else {
