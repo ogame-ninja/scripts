@@ -1,6 +1,16 @@
 origin = "1:2:3"
 nbPathfindersMin = 10
 
+func alreadyRecycling(coord) {
+    fleet, slots = GetFleets()
+    for f in fleet {
+        if f.Mission == RECYCLEDEBRISFIELD && f.Destination == coord {
+            return true
+        }
+    }
+    return false
+}
+
 for {
     s = <-OnSystemInfos
     m = s.ExpeditionDebris.Metal
@@ -8,8 +18,14 @@ for {
     d = s.ExpeditionDebris.Deuterium
     n = s.ExpeditionDebris.PathfindersNeeded
     if n >= nbPathfindersMin {
-        dest = fmt.Sprintf("%d:%d:16", s.Galaxy(), s.System())
-        LogInfof("debris field at %s (M: %d, C: %d, D: %d)", dest, m, c, d)
+        dest = NewCoordinate(s.Galaxy(), s.System(), 16, PLANET_TYPE)
+        
+        // Make sure we don't send multiple fleet to same DF
+        if alreadyRecycling(dest) {
+            continue
+        }
+        
+        LogInfof("Debris field at %s (M: %d, C: %d, D: %d)", dest, m, c, d)
         f = NewFleet()
         f.SetOrigin(origin)
         f.SetDestination(dest)
