@@ -27,6 +27,7 @@
 [Send random message to attackers](official/message_attackers.go)  
 [Send discovery fleet](official/send_discovery_fleet.go)  
 [Auto colony builder](official/auto_colony_builder.go)  
+[Auto recycle expedition debris](official/automatic-recycle-expedition-debris.go)  
 
 ### Contributions are welcome
 
