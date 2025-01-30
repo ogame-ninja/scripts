@@ -292,9 +292,11 @@ func isUserWhitelisted(HighestBidderUserID, HighestBidder, itemName, itemCategor
 func TranslateItemNameToEnglish(name) {
     nameLower = strings.ToLower(name)
 
+    words = strings.Fields(nameLower)
+ 
     // Otherwise, attempt to translate using the dictionary
     for key, value in itemNameDictionary {
-        if strings.Contains(nameLower, key) {
+        if key in words {
             return value
         }
     }
