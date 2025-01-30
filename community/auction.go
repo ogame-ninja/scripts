@@ -65,26 +65,34 @@
  * improving the overall efficiency of auction participation."
  */
 
+bronze   = 'bronze'
+silver   = 'silver'
+gold     = 'gold'
+platinum = 'platinum'
+
 //######################################## SETTINGS START ########################################
 
 // Dictionary for translating item names (Portuguese → English)
 itemNameDictionary = {   
-    'bronze': 'bronze',   // Translates "bronze" to "bronze" (no change)
-    'prata': 'silver',    // Translates "prata" (Portuguese) to "silver" (English)
-    'ouro': 'gold',       // Translates "ouro" (Portuguese) to "gold" (English)
-    'platina': 'platinum' // Translates "platina" (Portuguese) to "platinum" (English)
+    'bronze':   bronze,   // English
+    'silver':   silver,   // English
+    'gold':     gold,     // English
+    'platinum': platinum, // English
+    'prata':    silver,   // Translates "prata"   (Portuguese) to "silver"   (English)
+    'ouro':     gold,     // Translates "ouro"    (Portuguese) to "gold"     (English)
+    'platina':  platinum, // Translates "platina" (Portuguese) to "platinum" (English)
 };
 
 // Maximum bid limits for each auctioned item (in resources)
 highestBids = {   
-    'bronze': 500000,     // Maximum bid for Bronze items
-    'silver': 1000000,    // Maximum bid for Silver items
-    'gold': 5000000,      // Maximum bid for Gold items
-    'platinum': 10000000  // Maximum bid for Platinum items
+    bronze  :   500000,  // Maximum bid for Bronze items
+    silver  :  1000000,  // Maximum bid for Silver items
+    gold    :  5000000,  // Maximum bid for Gold items
+    platinum: 10000000,  // Maximum bid for Platinum items
 };
 
 // Resource selection for bidding (only one should be set to true)
-metBid = true    // If true, the bot will place bids using Metal
+metBid  = true    // If true, the bot will place bids using Metal
 crysBid = false  // If true, the bot will place bids using Crystal
 deutBid = false  // If true, the bot will place bids using Deuterium
 
@@ -134,16 +142,16 @@ NOTIFY_UNMAPPED_ITEM_DISCORD = true     // Notify when an item has no mapped bid
 // Time range settings for auction processing (in seconds)
 AUCTION_TIME_RANGES = {
     "5_MINUTES": {
-        "bronze": { "min": 7, "max": 10 },       // Custom range for Bronze items
-        "silver": { "min": 5, "max": 7 },       // Custom range for Silver items
-        "gold": { "min": 3, "max": 5 },         // Custom range for Gold items
-        "platinum": { "min": 2, "max": 3 },     // Custom range for Platinum items
-        "default": { "min": 5, "max": 10 }       // Default range if category is unknown
+        "bronze":   { "min": 7, "max": 10 },    // Custom range for Bronze items
+        "silver":   { "min": 5, "max":  7 },    // Custom range for Silver items
+        "gold":     { "min": 3, "max":  5 },    // Custom range for Gold items
+        "platinum": { "min": 2, "max":  3 },    // Custom range for Platinum items
+        "default":  { "min": 5, "max": 10 },    // Default range if category is unknown
     },
-    "10_MINUTES": { "min": 60, "max": 120 },  // 301 - 600s (Last 10 min)
-    "30_MINUTES": { "min": 180, "max": 300 }, // 601 - 1800s (Last 30 min)
-    "60_MINUTES": { "min": 300, "max": 600 }, // 1801 - 3600s (Last 60 min)
-    "UNKNOWN": { "min": 5, "max": 10 }        // Fallback
+    "10_MINUTES": { "min":  60, "max": 120 },   //  301 -  600s (Last 10 min)
+    "30_MINUTES": { "min": 180, "max": 300 },   //  601 - 1800s (Last 30 min)
+    "60_MINUTES": { "min": 300, "max": 600 },   // 1801 - 3600s (Last 60 min)
+    "UNKNOWN":    { "min":   5, "max":  10 },   // Fallback
 };
 
 //######################################## SETTINGS END ########################################
@@ -242,10 +250,10 @@ func DetermineMaxBid(name, auction) {
 
     highestBid = highestBids[itemEnglishName];
 
-	if (highestBid != nil) {
-		LogDebug("Detected '" + name + "' as (" + itemCategory + ") | highest bid: " + Dotify(highestBid));
-		return highestBid, itemCategory;
-	}	
+    if (highestBid != nil) {
+        LogDebug("Detected '" + name + "' as (" + itemCategory + ") | highest bid: " + Dotify(highestBid));
+        return highestBid, itemCategory;
+    }   
 
     message = "[WARN] Unable to map '" + name + "' (" + itemCategory + ") to a bid value, skipping";
     LogAndNotify(message, "WARN", NOTIFY_UNMAPPED_ITEM_DISCORD);
@@ -321,7 +329,7 @@ func processAuction() {
     
     // Calculate the amount to bid
     shouldBid = auc.MinimumBid - auc.AlreadyBid
-    LogInfo("Bidding " + Dotify(auc.AlreadyBid) + " + " + Dotify(shouldBid) + " / " + Dotify(highestBid) + " resources for '" + auc.CurrentItem + "' (" + itemCategory + ")")	
+    LogInfo("Bidding " + Dotify(auc.AlreadyBid) + " + " + Dotify(shouldBid) + " / " + Dotify(highestBid) + " resources for '" + auc.CurrentItem + "' (" + itemCategory + ")")   
 
     // Attempt to place a bid
     err = AucDo(shouldBid)
