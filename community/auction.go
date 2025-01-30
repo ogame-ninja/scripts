@@ -65,22 +65,22 @@
  * improving the overall efficiency of auction participation."
  */
 
-bronze   = 'bronze'
-silver   = 'silver'
-gold     = 'gold'
-platinum = 'platinum'
+bronze   = "bronze"
+silver   = "silver"
+gold     = "gold"
+platinum = "platinum"
 
 //######################################## SETTINGS START ########################################
 
 // Dictionary for translating item names (Portuguese → English)
 itemNameDictionary = {   
-    'bronze':   bronze,   // English
-    'silver':   silver,   // English
-    'gold':     gold,     // English
-    'platinum': platinum, // English
-    'prata':    silver,   // Translates "prata"   (Portuguese) to "silver"   (English)
-    'ouro':     gold,     // Translates "ouro"    (Portuguese) to "gold"     (English)
-    'platina':  platinum, // Translates "platina" (Portuguese) to "platinum" (English)
+    "bronze":   bronze,   // English
+    "silver":   silver,   // English
+    "gold":     gold,     // English
+    "platinum": platinum, // English
+    "prata":    silver,   // Translates "prata"   (Portuguese) to "silver"   (English)
+    "ouro":     gold,     // Translates "ouro"    (Portuguese) to "gold"     (English)
+    "platina":  platinum, // Translates "platina" (Portuguese) to "platinum" (English)
 };
 
 // Maximum bid limits for each auctioned item (in resources)
@@ -100,7 +100,7 @@ deutBid = false  // If true, the bot will place bids using Deuterium
 bidHome = "P:1:1:1"  // Coordinates of the celestial object used for bidding
 
 // List of forbidden words (items containing these words will be ignored)
-forbiddenWords = ['energia']  // If an auctioned item contains this word, it will be skipped (Eg., "Energy")
+forbiddenWords = ["energia"]  // If an auctioned item contains this word, it will be skipped (Eg., "Energy")
 
 // Whitelist of user IDs (if the highest bidder is on this list, the bot will not bid)
 whitelist = [123456789, 987654321]  // List of user IDs that should not be outbid (https://s{code}-{community}.ogame.gameforge.com/api/players.xml)
