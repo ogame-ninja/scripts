@@ -28,6 +28,7 @@
 [Send discovery fleet](official/send_discovery_fleet.go)  
 [Auto colony builder](official/auto_colony_builder.go)  
 [Auto recycle expedition debris](official/automatic-recycle-expedition-debris.go)  
+[Highscore crawler](official/highscore_crawler.go)  
 
 ### Contributions are welcome
 
