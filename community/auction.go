@@ -228,6 +228,7 @@ AUCTION_TIME_RANGES = {
 // ########################################### SETTINGS END ##################################################
 
 var strings = import("strings")  // Imports the "strings" module, used for string manipulation throughout the script
+var regexp = import("regexp")
 
 // ########################################### INITIALIZATION VALIDATION #####################################
 
@@ -288,11 +289,17 @@ func isUserWhitelisted(HighestBidderUserID, HighestBidder, itemName, itemCategor
     return false;
 }
 
+func cleanString(s) {
+    // Use Unicode character class to match only letters, digits, and spaces
+    re = regexp.MustCompile(`[^\p{L}\p{N} ]+`)
+    return re.ReplaceAllString(s, "")
+}
+
 // If the language is missing or the translation is incorrect, it provides assistance for correction.
 func TranslateItemNameToEnglish(name) {
     nameLower = strings.ToLower(name)
 
-    words = strings.Fields(nameLower)
+    words = strings.Fields(cleanString(nameLower))
  
     // Otherwise, attempt to translate using the dictionary
     for key, value in itemNameDictionary {
