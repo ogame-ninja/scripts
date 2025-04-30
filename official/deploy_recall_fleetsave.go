@@ -15,6 +15,13 @@ that's how long the total flight time will be. */
 fleetSpeed = TEN_PERCENT // TWENTY_PERCENT ... HUNDRED_PERCENT (Set to whichever speed you desire)
 //////////////////////////////////////
 
+// Calculate Deut we have from where we are fleetsaving from.
+func enoughDeutCheck() {
+    celestial = GetCachedCelestial(sendFrom)
+    resources, err = GetResourcesDetails(sendFrom)
+    return resources.Deuterium.Available
+}
+
 // Calculate deut to take.
 celestial = GetCachedCelestial(sendFrom)
 resources, err = GetResourcesDetails(celestial.GetID())
@@ -23,7 +30,7 @@ deutToTake = resources.Deuterium.Available - deutToLeave
 // Variables for Telegram usage.
 universeName = GetUniverseName()
 playerName = GetCachedPlayer().PlayerName
-uniPlayerName = universeName + " - " + playerName + ":"
+uniPlayerName = universeName + " - " + playerName
 
 // Creates a new fleet object for fleetsaving.
 mainFleet = NewFleet()
@@ -31,12 +38,19 @@ mainFleet.SetOrigin(sendFrom)
 mainFleet.SetDestination(sendTo)
 mainFleet.SetSpeed(fleetSpeed)
 mainFleet.SetMission(PARK)
+mainFleet.SetAllShips()
 _, fuel = mainFleet.FlightTime()
 mainFleet.SetAllMetal()
 mainFleet.SetAllCrystal()
 mainFleet.SetDeuterium(deutToTake - fuel)
-mainFleet.SetAllShips()
+enoughDeutForFlight = enoughDeutCheck()
 fleet, err = mainFleet.SendNow()
+
+// If we do not have enough Deut the fleet cannot be sent, warning message is sent to Telegram.
+if enoughDeutForFlight < fuel {
+    SendTelegram(TelegramID, uniPlayerName + " WARNING: Not enough Deut to fleetsave, please check and try again!")
+    return
+}
 
 // Calculates half the arrival time in order to recall the deploy half-way through the flight.
 half = fleet.ArriveIn / 2 
